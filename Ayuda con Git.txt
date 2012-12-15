@@ -1,0 +1,21 @@
+//Para acceder a sus repositorios
+cd "colocan aqui la ruta, por ejemplo"
+
+cd /c/eclipse/workspace/IHM/CalcTris
+
+
+//Para subir algun cambio
+//Acceden al repositorio 
+cd /c/eclipse/workspace/IHM/CalcTris
+//Le dan add y commit con algun mensaje
+git add*
+git commit -m "Mi primer commit"
+git push
+
+//Para bajarse los cambios
+//Acceden al repositorio 
+cd /c/eclipse/workspace/IHM/CalcTris
+//Le dan git pull
+git pull
+
+y Listo =)
