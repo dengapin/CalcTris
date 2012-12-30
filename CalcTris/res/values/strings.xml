@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">CalcTris</string>
+    <string name="hello_world">Hello world - Efrain Astudillo!</string>
+    <string name="nombre">Esta es una APP de prueba!</string>
+    <string name="handle">Handle</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">CalcTris</string>
+    <string name="btn1">Boton 1</string>
+
+</resources>
