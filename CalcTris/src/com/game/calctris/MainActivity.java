@@ -1,6 +1,5 @@
 package com.game.calctris;
 
-import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.controls.AnalogOnScreenControl;
 import org.andengine.engine.camera.hud.controls.AnalogOnScreenControl.IAnalogOnScreenControlListener;
 import org.andengine.engine.camera.hud.controls.BaseOnScreenControl;
@@ -21,6 +20,7 @@ import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.input.touch.controller.MultiTouch;
+import org.andengine.input.touch.controller.MultiTouchController;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -43,7 +43,7 @@ public class MainActivity extends SimpleBaseGameActivity {
 		// Fields
 		// ===========================================================
 
-		private Camera mCamera;
+		private org.andengine.engine.camera.Camera mCamera;
 
 		private BitmapTextureAtlas mBitmapTextureAtlas;
 		private ITextureRegion mFaceTextureRegion;
@@ -68,11 +68,27 @@ public class MainActivity extends SimpleBaseGameActivity {
 
 		@Override
 		public EngineOptions onCreateEngineOptions() {
-			this.mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+			//this.mCamera = new Camera();
 
 			final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mCamera);
 			engineOptions.getTouchOptions().setNeedsMultiTouch(true);
-
+			
+			//Something I add to solve my MultiTouch problem, by Andrea C.
+			/*try {
+                if(MultiTouch.isSupported(this)) {
+                	EngineOptions.setTouchController(new MultiTouchController());
+                        if(MultiTouch.isSupportedDistinct(this)) {
+                                Toast.makeText(this, "MultiTouch detected --> Drag multiple Sprites with multiple fingers!", Toast.LENGTH_LONG).show();
+                        } else {
+                                Toast.makeText(this, "MultiTouch detected --> Drag multiple Sprites with multiple fingers!\n\n(Your device might have problems to distinguish between separate fingers.)", Toast.LENGTH_LONG).show();
+                        }
+                } else {
+                        Toast.makeText(this, "Sorry your device does NOT support MultiTouch!\n\n(Falling back to SingleTouch.)", Toast.LENGTH_LONG).show();
+                }
+	        } catch (final MultiTouchException e) {
+	                Toast.makeText(this, "Sorry your Android Version does NOT support MultiTouch!\n\n(Falling back to SingleTouch.)", Toast.LENGTH_LONG).show();
+	        }*/
+			
 			if(MultiTouch.isSupported(this)) {
 				if(MultiTouch.isSupportedDistinct(this)) {
 					Toast.makeText(this, "MultiTouch detected --> Both controls will work properly!", Toast.LENGTH_SHORT).show();
