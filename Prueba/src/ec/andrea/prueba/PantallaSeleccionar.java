@@ -96,22 +96,27 @@ public class PantallaSeleccionar extends SimpleBaseGameActivity{
         	}
         };
         this.mScene.attachChild(boton1);
+        this.mScene.registerTouchArea(boton1);
         //JugarResta
         final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager){
         	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaSeleccionar.this, PantallaGame.class);
+        		startActivity(intent);
         		return true;
         	}
         };
         this.mScene.attachChild(boton2);
+        this.mScene.registerTouchArea(boton2);
         //BotonAtras
         final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
         	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaSeleccionar.this, PantallaNivel.class);
+        		startActivity(intent);
         		return true;
         	}
         };
         this.mScene.attachChild(boton3);
+        this.mScene.registerTouchArea(boton3);
                                 
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;
