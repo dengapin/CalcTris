@@ -93,7 +93,8 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         		return true;
         	}
         };
-        this.mScene.attachChild(boton1);
+        this.mScene.registerTouchArea(boton1);//Se registra el evento
+        this.mScene.setTouchAreaBindingOnActionDownEnabled(true);
         this.mScene.attachChild(boton1);
         //BotonTutorial
         final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager){
@@ -103,7 +104,8 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         		return true;
         	}
         };
-        this.mScene.attachChild(boton2);
+        this.mScene.registerTouchArea(boton2);//Se registra el evento
+        this.mScene.setTouchAreaBindingOnActionDownEnabled(true);
         this.mScene.attachChild(boton2);
         //BotonAtras
         final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
@@ -113,7 +115,8 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         		return true;
         	}
         };
-        this.mScene.attachChild(boton3);
+        this.mScene.registerTouchArea(boton3);//Se registra el evento
+        this.mScene.setTouchAreaBindingOnActionDownEnabled(true);
         this.mScene.attachChild(boton3);
                                 
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
