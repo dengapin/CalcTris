@@ -86,6 +86,7 @@ public class TestActivity extends SimpleBaseGameActivity {
         this.mScene.setBackground(fondo);
         
         //Para los botones
+        //BotonJugar
         final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager){
         	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
         		Intent intent = new Intent (TestActivity.this, PantallaJugar.class);
@@ -94,9 +95,21 @@ public class TestActivity extends SimpleBaseGameActivity {
         	}
         };
         this.mScene.attachChild(boton1);
-        final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager);
+        //JugarPuntajes
+        final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager){
+        	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		Intent intent = new Intent (TestActivity.this, PantallaPuntajes.class);
+        		return true;
+        	}
+        };
         this.mScene.attachChild(boton2);
-        final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager);
+        //BotonAyuda
+        final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
+        	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		Intent intent = new Intent (TestActivity.this, PantallaAyuda.class);
+        		return true;
+        	}
+        };
         this.mScene.attachChild(boton3);
                                 
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);

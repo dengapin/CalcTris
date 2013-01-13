@@ -63,8 +63,7 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 135, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
         this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAcerca.png", 0, 0);//BotonAcercaDe
         this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonTutorial.png", 0, 45);//BotonTutorial
-        //Buscar la imagen de Atras
-        this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAyuda.png", 0, 90);//BotonAtras
+        this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAtras.png", 0, 90);//BotonAtras
         this.mBotones.load();
 		
 	}
@@ -86,11 +85,32 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         this.mScene.setBackground(fondo);
         
         //Para los botones
-        final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager);
+        //BotonAcercaDe
+        final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager){
+        	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		Intent intent = new Intent (PantallaAyuda.this, PantallaAcercaDe.class);
+        		startActivity(intent);
+        		return true;
+        	}
+        };
         this.mScene.attachChild(boton1);
-        final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager);
+        //BotonTutorial
+        final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager){
+        	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		Intent intent = new Intent (PantallaAyuda.this, PantallaTutorial.class);
+        		startActivity(intent);
+        		return true;
+        	}
+        };
         this.mScene.attachChild(boton2);
-        final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager);
+        //BotonAtras
+        final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
+        	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		Intent intent = new Intent (PantallaAyuda.this, TestActivity.class);
+        		startActivity(intent);
+        		return true;
+        	}
+        };
         this.mScene.attachChild(boton3);
                                 
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
