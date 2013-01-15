@@ -24,39 +24,39 @@
         <activity
             android:name=".PantallaAcercaDe"
             android:label="@string/app_name"   
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation" />
         <activity
             android:name=".PantallaAyuda"
             android:label="@string/app_name"   
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation" />
         <activity
             android:name=".PantallaGame"
             android:label="@string/app_name"   
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation" />
         <activity
             android:name=".PantallaJugar"
             android:label="@string/app_name"   
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation" />
         <activity
             android:name=".PantallaNivel"
             android:label="@string/app_name"   
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation" />
         <activity
             android:name=".PantallaPausa"
             android:label="@string/app_name"   
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation" />
         <activity
             android:name=".PantallaPuntajes"
             android:label="@string/app_name"   
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation" />
         <activity
             android:name=".PantallaSeleccionar"
             android:label="@string/app_name"   
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation" />
         <activity
             android:name=".PantallaTutorial"
             android:label="@string/app_name"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation" />
     </application>
 
 </manifest>
