@@ -57,7 +57,7 @@ public class PantallaNivel extends SimpleBaseGameActivity{
         
         //Para el fondo
         this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 360, 598, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
-        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoNivela.png", 0, 0);
+        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoNivel.png", 0, 0);
         this.mFondo.load();//Cargo la imagen
         
         //Para los botones
@@ -85,7 +85,8 @@ public class PantallaNivel extends SimpleBaseGameActivity{
         //Para los botones
         //BotonNivel1
         final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager){
-        	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaNivel.this, PantallaSeleccionar.class);
         		startActivity(intent);
         		return true;
@@ -95,7 +96,8 @@ public class PantallaNivel extends SimpleBaseGameActivity{
         this.mScene.attachChild(boton1);
         //JugarNivel2
         final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager){
-        	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaNivel.this, PantallaSeleccionar.class);
         		startActivity(intent);
         		return true;
@@ -105,7 +107,8 @@ public class PantallaNivel extends SimpleBaseGameActivity{
         this.mScene.attachChild(boton2);
         //BotonAtras
         final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
-        	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaNivel.this, PantallaJugar.class);
         		startActivity(intent);
         		return true;

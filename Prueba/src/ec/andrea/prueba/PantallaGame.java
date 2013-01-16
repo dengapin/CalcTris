@@ -49,7 +49,7 @@ public class PantallaGame extends SimpleBaseGameActivity{
         
         //Para el fondo
         this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 360, 598, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
-        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoGame.png", 0, 0);
+        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoGame2.png", 0, 0);
         this.mFondo.load();//Cargo la imagen
 		
 	}

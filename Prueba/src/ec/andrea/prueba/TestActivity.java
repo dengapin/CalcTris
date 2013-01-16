@@ -29,6 +29,9 @@ public class TestActivity extends SimpleBaseGameActivity {
     private BitmapTextureAtlas mFondo;//Arreglo de fondo
     private ITextureRegion mFondoRegion;//Texture del fondo
     
+    private BitmapTextureAtlas mNube;
+    private ITextureRegion mNubeRegion;
+    
     private BitmapTextureAtlas mBotones;//Arreglo de botones
     private ITextureRegion mBoton1;//BotonJugar
     private ITextureRegion mBoton2;//BotonPuntajes
@@ -61,6 +64,11 @@ public class TestActivity extends SimpleBaseGameActivity {
         this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoPrueba.png", 0, 0);
         this.mFondo.load();//Cargo la imagen
         
+        //Para el fondo con la nube en movimiento
+        this.mNube = new BitmapTextureAtlas(this.getTextureManager(), 85, 85, TextureOptions.BILINEAR);
+        this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nube_Pequena.png", 0, 0);
+        this.mNube.load();
+        
         //Para los botones
         this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 135, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
         this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonJugar.png", 0, 0);
@@ -83,13 +91,15 @@ public class TestActivity extends SimpleBaseGameActivity {
         //Para el fondo
         final AutoParallaxBackground fondo = new AutoParallaxBackground(0, 0, 0, 5);
         fondo.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0,0, this.mFondoRegion, vertexBufferObjectManager)));
+        fondo.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, 0, this.mNubeRegion, vertexBufferObjectManager)));
         mScene.setBackground(fondo);
+              
         
-       
         //Para los botones
         //BotonJugar
         final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager){
-        	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (TestActivity.this, PantallaJugar.class);
         		startActivity(intent);
         		return true;
@@ -99,7 +109,8 @@ public class TestActivity extends SimpleBaseGameActivity {
         mScene.attachChild(boton1);
         //JugarPuntajes
         final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager){
-        	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (TestActivity.this, PantallaPuntajes.class);
         		startActivity(intent);
         		return true;
@@ -109,7 +120,8 @@ public class TestActivity extends SimpleBaseGameActivity {
         mScene.attachChild(boton2);
         //BotonAyuda
         final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
-        	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (TestActivity.this, PantallaAyuda.class);
         		startActivity(intent);
         		return true;
