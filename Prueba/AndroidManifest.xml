@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ec.andrea.prueba"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="14" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="ec.andrea.prueba.TestActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".PantallaAcercaDe"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".PantallaAyuda"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".PantallaGame"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".PantallaJugar"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".PantallaNivel"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".PantallaPausa"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".PantallaPuntajes"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".PantallaSeleccionar"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".PantallaTutorial"
+            android:configChanges="orientation" />
+    </application>
+
+</manifest>
