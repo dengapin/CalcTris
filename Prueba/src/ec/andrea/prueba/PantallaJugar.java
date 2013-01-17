@@ -33,6 +33,9 @@ public class PantallaJugar extends SimpleBaseGameActivity{
     private ITextureRegion mBoton1;//BotonJuego Nuevo
     private ITextureRegion mBoton2;//Boton Continuar
     private ITextureRegion mBoton3;//BotonRegresar
+    
+    private BitmapTextureAtlas mNube;
+    private ITextureRegion mNubeRegion;
 
     private Scene mScene;
 
@@ -58,6 +61,11 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoJugar.png", 0, 0);
         this.mFondo.load();//Cargo la imagen de fondo
         
+        //Para el fondo con la nube en movimiento
+        this.mNube = new BitmapTextureAtlas(this.getTextureManager(), 227, 85, TextureOptions.BILINEAR);
+        this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nubes_pequenas.png", 0, 0);
+        this.mNube.load();
+        
         //Para los botones
         this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 135, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
         this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonJuegNuevo.png", 0, 0);//BotonJuegoNuevo
@@ -81,6 +89,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         //Para el fondo
         final AutoParallaxBackground fondo = new AutoParallaxBackground(0, 0, 0, 5);
         fondo.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0,0, this.mFondoRegion, vertexBufferObjectManager)));
+        fondo.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0,0, this.mNubeRegion, vertexBufferObjectManager)));
         this.mScene.setBackground(fondo);
         
         //Para los botones

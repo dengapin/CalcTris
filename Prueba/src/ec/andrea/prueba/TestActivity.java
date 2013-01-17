@@ -65,8 +65,8 @@ public class TestActivity extends SimpleBaseGameActivity {
         this.mFondo.load();//Cargo la imagen
         
         //Para el fondo con la nube en movimiento
-        this.mNube = new BitmapTextureAtlas(this.getTextureManager(), 85, 85, TextureOptions.BILINEAR);
-        this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nube_Pequena.png", 0, 0);
+        this.mNube = new BitmapTextureAtlas(this.getTextureManager(), 227, 85, TextureOptions.BILINEAR);
+        this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nubes_pequenas.png", 0, 0);
         this.mNube.load();
         
         //Para los botones
@@ -93,7 +93,6 @@ public class TestActivity extends SimpleBaseGameActivity {
         fondo.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0,0, this.mFondoRegion, vertexBufferObjectManager)));
         fondo.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, 0, this.mNubeRegion, vertexBufferObjectManager)));
         mScene.setBackground(fondo);
-              
         
         //Para los botones
         //BotonJugar
