@@ -29,6 +29,9 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
     private BitmapTextureAtlas mFondo;//Arreglo de fondo
     private ITextureRegion mFondoRegion;//Texture del fondo
     
+    private BitmapTextureAtlas mNube;
+    private ITextureRegion mNubeRegion;
+    
     private BitmapTextureAtlas mBotones;//Arreglo de botones
     private ITextureRegion mBoton1;//BotonAcercaDe
     private ITextureRegion mBoton2;//BotonTutotial
@@ -59,12 +62,16 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoAyuda.png", 0, 0);
         this.mFondo.load();//Cargo la imagen
         
+        //Para el fondo con la nube en movimiento
+        this.mNube = new BitmapTextureAtlas(this.getTextureManager(), 227, 85, TextureOptions.BILINEAR);
+        this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nubes_pequenas.png", 0, 0);
+        this.mNube.load();
+        
         //Para los botones
         this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 135, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
         this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAcerca.png", 0, 0);//BotonAcercaDe
         this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonTutorial.png", 0, 45);//BotonTutorial
-        //Buscar la imagen de Atras
-        this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAyuda.png", 0, 90);//BotonAtras
+        this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAtras.png", 0, 90);//BotonAtras
         this.mBotones.load();
 		
 	}
@@ -83,14 +90,42 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         //Para el fondo
         final AutoParallaxBackground fondo = new AutoParallaxBackground(0, 0, 0, 5);
         fondo.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0,0, this.mFondoRegion, vertexBufferObjectManager)));
+        fondo.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, 0, this.mNubeRegion, vertexBufferObjectManager)));
         this.mScene.setBackground(fondo);
         
         //Para los botones
-        final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager);
+        //BotonAcercaDe
+        final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager){
+        	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		Intent intent = new Intent (PantallaAyuda.this, PantallaAcercaDe.class);
+        		startActivity(intent);
+        		return true;
+        	}
+        };
+        this.mScene.registerTouchArea(boton1);//Se registra el evento
+        this.mScene.setTouchAreaBindingOnActionDownEnabled(true);
         this.mScene.attachChild(boton1);
-        final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager);
+        //BotonTutorial
+        final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager){
+        	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		Intent intent = new Intent (PantallaAyuda.this, PantallaTutorial.class);
+        		startActivity(intent);
+        		return true;
+        	}
+        };
+        this.mScene.registerTouchArea(boton2);//Se registra el evento
+        this.mScene.setTouchAreaBindingOnActionDownEnabled(true);
         this.mScene.attachChild(boton2);
-        final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager);
+        //BotonAtras
+        final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
+        	public boolean onAreaTouch(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		Intent intent = new Intent (PantallaAyuda.this, TestActivity.class);
+        		startActivity(intent);
+        		return true;
+        	}
+        };
+        this.mScene.registerTouchArea(boton3);//Se registra el evento
+        this.mScene.setTouchAreaBindingOnActionDownEnabled(true);
         this.mScene.attachChild(boton3);
                                 
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);

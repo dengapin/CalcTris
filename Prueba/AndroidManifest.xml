@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="14" />
+        android:targetSdkVersion="15" />
 
     <application
         android:allowBackup="true"
@@ -22,13 +22,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PantallaAcercaDe"
+            android:name=".PantallaAcercaDe" 
             android:configChanges="orientation" />
         <activity
             android:name=".PantallaAyuda"
             android:configChanges="orientation" />
         <activity
-            android:name=".PantallaGame"
+            android:name=".PantallaGame"  
             android:configChanges="orientation" />
         <activity
             android:name=".PantallaJugar"
@@ -37,10 +37,10 @@
             android:name=".PantallaNivel"
             android:configChanges="orientation" />
         <activity
-            android:name=".PantallaPausa"
+            android:name=".PantallaPausa" 
             android:configChanges="orientation" />
         <activity
-            android:name=".PantallaPuntajes"
+            android:name=".PantallaPuntajes" 
             android:configChanges="orientation" />
         <activity
             android:name=".PantallaSeleccionar"

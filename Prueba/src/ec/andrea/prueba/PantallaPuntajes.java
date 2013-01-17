@@ -9,15 +9,12 @@ import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
-import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
-
-import android.content.Intent;
 
 public class PantallaPuntajes extends SimpleBaseGameActivity{
 	
@@ -28,6 +25,9 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
     //Variables
     private BitmapTextureAtlas mFondo;//Arreglo de fondo
     private ITextureRegion mFondoRegion;//Texture del fondo
+    
+    private BitmapTextureAtlas mNube;
+    private ITextureRegion mNubeRegion;
     
     private BitmapTextureAtlas mBotones;//Arreglo de botones
     private ITextureRegion mBoton1;//BotonAtras
@@ -57,6 +57,11 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
         this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoPuntajes.png", 0, 0);
         this.mFondo.load();//Cargo la imagen
         
+        //Para el fondo con la nube en movimiento
+        this.mNube = new BitmapTextureAtlas(this.getTextureManager(), 227, 85, TextureOptions.BILINEAR);
+        this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nubes_pequenas.png", 0, 0);
+        this.mNube.load();
+        
         //Para los botones
         this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 135, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
         //Buscar la imagen Boton Atras
@@ -79,6 +84,7 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
         //Para el fondo
         final AutoParallaxBackground fondo = new AutoParallaxBackground(0, 0, 0, 5);
         fondo.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0,0, this.mFondoRegion, vertexBufferObjectManager)));
+        fondo.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, 0, this.mNubeRegion, vertexBufferObjectManager)));
         this.mScene.setBackground(fondo);
         
         //Para los botones
