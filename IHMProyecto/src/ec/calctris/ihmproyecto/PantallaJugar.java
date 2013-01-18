@@ -119,7 +119,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
-        		Intent intent = new Intent (PantallaJugar.this, TestActivity.class);
+        		Intent intent = new Intent (PantallaJugar.this, ActivityProyecto.class);
         		startActivity(intent);
         		return true;
         	}
