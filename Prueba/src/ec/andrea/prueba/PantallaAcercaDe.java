@@ -19,8 +19,8 @@ import org.andengine.ui.activity.SimpleBaseGameActivity;
 public class PantallaAcercaDe extends SimpleBaseGameActivity{
 
 	//Constantes
-	private static final int CAMERA_WIDTH = 360; //Ancho 320px
-    private static final int CAMERA_HEIGHT = 720; //Alto 720px
+	private static final int CAMERA_WIDTH = 480; //Ancho 480px
+    private static final int CAMERA_HEIGHT = 800; //Alto 800px
 
     //Variables
     private BitmapTextureAtlas mFondo;//Arreglo de fondo
@@ -51,8 +51,8 @@ public class PantallaAcercaDe extends SimpleBaseGameActivity{
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         
         //Para el fondo
-        this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 360, 598, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
-        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoAcerca.png", 0, 0);
+        this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 480, 800, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
+        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "PantallaAcercaDe.png", 0, 0);
         this.mFondo.load();//Cargo la imagen
         
         //Para el fondo con la nube en movimiento

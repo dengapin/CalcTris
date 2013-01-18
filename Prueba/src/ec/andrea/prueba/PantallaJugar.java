@@ -22,8 +22,8 @@ import android.content.Intent;
 public class PantallaJugar extends SimpleBaseGameActivity{
 	
 	//Constantes
-	private static final int CAMERA_WIDTH = 360; //Ancho 320px
-    private static final int CAMERA_HEIGHT = 720; //Alto 720px
+	private static final int CAMERA_WIDTH = 480; //Ancho 480px
+    private static final int CAMERA_HEIGHT = 800; //Alto 800px
     
     //Variables
     private BitmapTextureAtlas mFondo;//Arreglo de fondo
@@ -57,8 +57,8 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         
         //Para el fondo
-        this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 360, 598, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
-        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoJugar.png", 0, 0);
+        this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 480, 800, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
+        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "PantallaJugar.png", 0, 0);
         this.mFondo.load();//Cargo la imagen de fondo
         
         //Para el fondo con la nube en movimiento
@@ -68,8 +68,8 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         
         //Para los botones
         this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 135, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
-        this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonJuegNuevo.png", 0, 0);//BotonJuegoNuevo
-        this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonCont.png", 0, 45);//BotonContinuar
+        this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonJuegoNuevo.png", 0, 0);//BotonJuegoNuevo
+        this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonContinuar.png", 0, 45);//BotonContinuar
         this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAtras.png", 0, 90);//BotonAtras
         this.mBotones.load();
 		
@@ -97,7 +97,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager){
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
-        		Intent intent = new Intent (PantallaJugar.this, PantallaNivel.class);
+        		Intent intent = new Intent (PantallaJugar.this, PantallaSeleccionar.class);
         		startActivity(intent);
         		return true;
         	}

@@ -22,8 +22,8 @@ import android.content.Intent;
 public class PantallaPausa extends SimpleBaseGameActivity{
 
 	//Constantes
-	private static final int CAMERA_WIDTH = 360; //Ancho 320px
-    private static final int CAMERA_HEIGHT = 720; //Alto 720px
+	private static final int CAMERA_WIDTH = 480; //Ancho 480px
+    private static final int CAMERA_HEIGHT = 800; //Alto 800px
 
     //Variables
     private BitmapTextureAtlas mFondo;//Arreglo de fondo
@@ -57,8 +57,8 @@ public class PantallaPausa extends SimpleBaseGameActivity{
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         
         //Para el fondo
-        this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 360, 598, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
-        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "FondoPrueba.png", 0, 0);
+        this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 480, 800, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
+        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "PantallaPausa.png", 0, 0);
         this.mFondo.load();//Cargo la imagen        
         
         //Para el fondo con la nube en movimiento
@@ -68,8 +68,8 @@ public class PantallaPausa extends SimpleBaseGameActivity{
         
         //Para los botones
         this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 180, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
-        this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonCont.png", 0, 0);//BotonContinuar
-        this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonNuevPart.png", 0, 45);//BotonNuevaPartida
+        this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonContinuar.png", 0, 0);//BotonContinuar
+        this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonJuegoNuevo.png", 0, 45);//BotonNuevaPartida
         this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonTutorial.png", 0, 90);//BotonTutorial
         this.mBoton4 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "home2.png", 0, 135);//BotonHome
         this.mBotones.load();
