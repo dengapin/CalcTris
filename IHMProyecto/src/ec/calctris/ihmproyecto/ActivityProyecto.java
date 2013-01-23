@@ -1,10 +1,17 @@
 package ec.calctris.ihmproyecto;
 
+import java.util.LinkedList;
+import java.util.Random;
+
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
+import org.andengine.entity.modifier.MoveXModifier;
 import org.andengine.entity.primitive.Rectangle;
+import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
@@ -15,6 +22,7 @@ import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.sensor.acceleration.AccelerationData;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -29,12 +37,12 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
-public class ActivityProyecto extends SimpleBaseGameActivity implements IAccelerationListener {
+public class ActivityProyecto extends SimpleBaseGameActivity implements IAccelerationListener, IOnSceneTouchListener {
 
 	//Constantes
 	private static final int CAMERA_WIDTH = 480; //Ancho 480px
     private static final int CAMERA_HEIGHT = 800; //Alto 800px
-    public int arreglo = 8;
+    public int tamarreglo = 8;
 
     //Variables
     private BitmapTextureAtlas mFondo;//Arreglo de fondo
@@ -44,13 +52,19 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
     private ITextureRegion mNubeRegion;
     
     private BitmapTextureAtlas mEsferas;
-    private ITextureRegion[] mFondoEsferas = new ITextureRegion[arreglo];
+    //private ITextureRegion[] mFondoEsferas = new ITextureRegion[tamarreglo];
+    //private ITextureRegion mFondoEsferas;
+    
+    /* =======================================================
+     * Variables que usare y me ayudarán para crear aleatoridad
+       =======================================================*/
+    private ITextureRegion mEsferasRegion;
+    private LinkedList esferasLL;
+    private LinkedList EspheresToAdd;
     
     private Scene mScene;
     
     private PhysicsWorld myPhysicsWorld;
-    
-    private int numeroAleatorio = (int)(Math.random()*9+1);//Genera número entre 1 al 9
     
     // ============================================================
     // Method: onCreateEmgineOptions
@@ -82,11 +96,14 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
 	    this.mNube.load();
         
         //Para las esferas
-		this.mEsferas = new BitmapTextureAtlas(this.getTextureManager(), 50, 450, TextureOptions.BILINEAR);
-		String ruta[] = {"Esfera1.png", "Esfera2.png", "Esfera3.png", "Esfera4.png", "Esfera5.png", "Esfera6.png", "Esfera7.png", "Esfera8.png", "Esfera9.png"};
-		for(int i = 0; i < arreglo; i++){
+		this.mEsferas = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+		/*String ruta[] = {"Esfera1.png", "Esfera2.png", "Esfera3.png", "Esfera4.png", "Esfera5.png", "Esfera6.png", "Esfera7.png", "Esfera8.png", "Esfera9.png"};
+		for(int i = 0; i < tamarreglo; i++){
 			this.mFondoEsferas[i] = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mEsferas, this, ruta[i], 0, i*50);
-		}
+		}*/
+		//this.mFondoEsferas = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mEsferas, this, "Esfera1.png", 0, 0);
+		//NEW
+		this.mEsferasRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mEsferas, this, "Esfera1.png", 0, 0);
 		this.mEsferas.load();
 	}
 
@@ -98,8 +115,13 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
         this.myPhysicsWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
         //El body del mundo fisico
-        final Body[] body = new Body[arreglo];
-        final Sprite[] esf = new Sprite[arreglo];
+        /*final Body[] body = new Body[tamarreglo];
+        final Sprite[] esf = new Sprite[tamarreglo];*/
+        /*final Body body;
+        final Sprite sprite;*/
+        //NEW
+        esferasLL = new LinkedList();
+        EspheresToAdd = new LinkedList();
         
         //Para el fondo
         final AutoParallaxBackground fondo = new AutoParallaxBackground(0, 0, 0, 5);
@@ -120,33 +142,35 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         PhysicsFactory.createBoxBody(this.myPhysicsWorld,pared3,BodyType.StaticBody,texturepared);
         PhysicsFactory.createBoxBody(this.myPhysicsWorld,pared4,BodyType.StaticBody,texturepared);
         
-        //Creando Sprite para cada esfera
-        for (int i = 0; i<arreglo; i++){
-        	esf[i] = new Sprite(158, 0, this.mFondoEsferas[i], vertexBufferObjectManager);
-        }
+        //Creando Sprite para cada esfera, se le hace un merge y se lo integra al mundo con attachChild
+        /*for (int i = 0; i<tamarreglo; i++){
+        	esf[i] = new Sprite(158, 0, this.mFondoEsferas[i], vertexBufferObjectManager){
+        		@Override
+    			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+    				this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
+    				return true;
+    			}
+        	};
+        	body[i] = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esf[i], BodyType.DynamicBody, texturepared);
+        	this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(esf[i],body[i],true,true));
+        	esf[i].setUserData(body[i]);
+        	mScene.attachChild(esf[i]);	
+        }*/
+        /*sprite = new Sprite(158, 0, this.mFondoEsferas, vertexBufferObjectManager){
+    		public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
+                if(pSceneTouchEvent.isActionDown()) {
+                        //this.addFace(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+                    return true;
+                }
+                return false;
+    		}
+    	};
+    	body = PhysicsFactory.createBoxBody(this.myPhysicsWorld, sprite, BodyType.DynamicBody, texturepared);
+    	this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(sprite,body,true,true));
+    	sprite.setUserData(body);
+    	mScene.attachChild(sprite);*/
         
-        //Creando las esferas en el mundo físico
-        for (int y = 0; y<arreglo; y++){
-        	body[y] = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esf[y], BodyType.DynamicBody, texturepared);
-        }
-        
-        //Para interactuar
-        for (int z = 0; z<arreglo; z++){
-        	this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(esf[z],body[z],true,true));
-        }
-        
-        //Le hago un merge
-        for (int a = 0; a<arreglo; a++){
-        	esf[a].setUserData(body[a]);
-        }
-        
-        //Agrego las esferas al scene
-        //Aqui tengo q darle aleatoridad
-        for (int b = 0; b<arreglo; b++){
-        	mScene.attachChild(esf[b]);	
-        }
-        //mScene.attachChild(esf);
-        mScene.attachChild(pared1);
+    	mScene.attachChild(pared1);
         mScene.attachChild(pared2);
         mScene.attachChild(pared3);
         mScene.attachChild(pared4);
@@ -154,8 +178,37 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         //Se retorna
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         this.mScene.registerUpdateHandler(this.myPhysicsWorld);
+        createSpriteSpawnTimeHandler();
         return mScene;
 	}
+	
+	/*
+	 * MEtodo para hacer aleatoriadad 
+	 */
+	public void addTarget() {
+	    Random rand = new Random();
+	    int x = ((int)Math.random()*(317 - 20) + 20);
+	    int y=0;
+
+	    Sprite target = new Sprite(x, y, mEsferasRegion.deepCopy(), this.getVertexBufferObjectManager());
+	    mScene.attachChild(target);
+
+	    EspheresToAdd.add(target);
+
+	}
+	private void createSpriteSpawnTimeHandler() {
+	    TimerHandler spriteTimerHandler;
+	    float mEffectSpawnDelay = 1f;
+	    spriteTimerHandler = new TimerHandler(mEffectSpawnDelay, true, new ITimerCallback() {
+	        @Override
+	        public void onTimePassed(TimerHandler pTimerHandler) {
+	            addTarget();
+	        }
+	    });
+
+	    getEngine().registerUpdateHandler(spriteTimerHandler);
+	}
+
 	
 	public void OnResumeGame(){
 		super.onResumeGame();
@@ -177,5 +230,11 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
 	public void OnPauseGame(){
 		super.onPauseGame();
 		this.disableAccelerationSensor();
+	}
+
+	@Override
+	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
