@@ -139,49 +139,52 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         mScene.attachChild(pared2);
         mScene.attachChild(pared3);
         mScene.attachChild(pared4);
+        createSpheresbyTimeHandler();
         
         //Se retorna
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         this.mScene.registerUpdateHandler(this.myPhysicsWorld);
-        createSpheresbyTimeHandler();
         return mScene;
 	}
 	
 	public void createSpheresbyTimeHandler(){
 		TimerHandler timeSpheres;
 		float mEffectSpawnDelay = 10f;
-		Random px = new Random();
-		final int py = 0;
-		
-		final int num = px.nextInt(300);
+
 		
 		timeSpheres = new TimerHandler(mEffectSpawnDelay, true, new ITimerCallback(){
 			@Override
             public void onTimePassed(TimerHandler pTimerHandler) {
-				addSpheres(num, py);
+				addSpheres();
             }
 		});
 		
 		getEngine().registerUpdateHandler(timeSpheres);
 	}
 	
-	private void addSpheres(final int pX, final int pY) {
+	private void addSpheres() {
 		
      	//El body del mundo fisico
         final Body[] body = new Body[tamarreglo];
         final Sprite[] esf = new Sprite[tamarreglo];
-        final FixtureDef texturepared = PhysicsFactory.createFixtureDef(0, 0.1f, 10.0f);
+        final FixtureDef textureEsphere = PhysicsFactory.createFixtureDef(0, 0.1f, 10.0f);
         Random number = new Random();
+        final Sprite esferaElegida;
+        final Body body2;
+		Random px = new Random();
+		final int py = 0;
+		final int num = px.nextInt(300);
         
         for (int i = 0; i<tamarreglo; i++){
-        	esf[i] = new Sprite(pX, pY, this.mFondoEsferas[i], this.getVertexBufferObjectManager());
-        	body[i] = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esf[i], BodyType.DynamicBody, texturepared);
-        	this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(esf[i],body[i],true,true));
-        	esf[i].setUserData(body[i]);
-        	mScene.attachChild(esf[i]);
+        	esf[i] = new Sprite(num, py, this.mFondoEsferas[i], this.getVertexBufferObjectManager());
         }
-        //int aleatorio = number.nextInt(8);
-        //mScene.attachChild(esf[aleatorio]);	
+        int aleatorio = number.nextInt(8);
+        esferaElegida = new Sprite(num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager());
+        esf[aleatorio] = esferaElegida;
+        body2 = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esferaElegida, BodyType.DynamicBody, textureEsphere);
+        esferaElegida.setUserData(body2);
+        this.mScene.attachChild(esferaElegida);
+        getEngine().registerUpdateHandler(this.myPhysicsWorld);
     }
 	
 	public void OnResumeGame(){
