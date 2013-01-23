@@ -1,19 +1,15 @@
 package com.game.calctris;
 
+import org.andengine.engine.Engine;
+import org.andengine.engine.LimitedFPSEngine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
-import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
+import org.andengine.engine.options.WakeLockOptions;
+import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
-import org.andengine.entity.sprite.Sprite;
-import org.andengine.opengl.texture.TextureOptions;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.opengl.util.GLState;
 import org.andengine.ui.activity.BaseGameActivity;
 import android.view.KeyEvent;
 
@@ -26,32 +22,30 @@ import android.view.KeyEvent;
  */
 public class CalcTrisGame extends BaseGameActivity
 {
-	private static final int CAMERA_WIDTH = 720;
-	private static final int CAMERA_HEIGHT = 480;
+	private static final int CAMERA_WIDTH = 480;
+	private static final int CAMERA_HEIGHT = 800;
 	
 	private Camera camera;
-	private Scene splashScene,mainScene;
+	//private BaseScene splashScene,menuScene;
 	
-	private BitmapTextureAtlas splashTextureAtlas,buttonTexture;
-	private ITextureRegion splashTextureRegion,buttonRegion;
-	private Sprite splash;
-	private enum SceneType
-	{
-		SPLASH,
-		MAIN,
-		OPTIONS,
-		WORLD_SELECTION,
-		LEVEL_SELECTION,
-		CONTROLLER
+
+	@SuppressWarnings("unused")
+	private ResourcesManager resourcesManager;
+
+	@Override
+	public Engine onCreateEngine(EngineOptions pEngineOptions) {
+		// TODO Auto-generated method stub
+		return new LimitedFPSEngine(pEngineOptions, 60);
 	}
-	private SceneType currentScene = SceneType.SPLASH;
 	//Create EngineOptions
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		// TODO Auto-generated method stub
-		this.camera=new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		return new EngineOptions(true,ScreenOrientation.LANDSCAPE_SENSOR,
-				new FillResolutionPolicy(),camera);
+		this. camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+		    EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_SENSOR, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.camera);
+		    engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
+		    engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
+		    return engineOptions;
 	}
 
 	@Override
@@ -59,86 +53,47 @@ public class CalcTrisGame extends BaseGameActivity
 			throws Exception {
 		// TODO Auto-generated method stub
 		//set base path to the Images
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		
-        splashTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 256, 256, TextureOptions.DEFAULT);
-        splashTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, this, "splash.png", 0, 0);
-        splashTextureAtlas.load();
-        
-        buttonTexture=new BitmapTextureAtlas(this.getTextureManager(), 200, 50);
-        buttonRegion= BitmapTextureAtlasTextureRegionFactory.createFromAsset(buttonTexture, this, "menu_quit.png",0,0);
-        buttonTexture.load();
-        
+		ResourcesManager.prepareManager(mEngine, this, camera, getVertexBufferObjectManager());
+	    resourcesManager = ResourcesManager.getInstance();
 		arg0.onCreateResourcesFinished();
 	}
 
 	@Override
 	public void onCreateScene(OnCreateSceneCallback arg0) throws Exception {
 		// TODO Auto-generated method stub
-		initSplashScene();
-		arg0.onCreateSceneFinished(this.splashScene);
+		SceneManager.getInstance().createSplashScene(arg0);
 	}
 	/**/
 	@Override
 	public void onPopulateScene(Scene arg0, OnPopulateSceneCallback arg1)
 			throws Exception {
-		mEngine.registerUpdateHandler(new TimerHandler(5f, new ITimerCallback(){
-            public void onTimePassed(final TimerHandler pTimerHandler) 
-            {
-                mEngine.unregisterUpdateHandler(pTimerHandler);
-                loadResources();
-                loadScenes();
-                splash.detachSelf();
-                mEngine.setScene(mainScene);
-                currentScene = SceneType.MAIN;
-            }
-		}));
+		mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() 
+	    {
+	            public void onTimePassed(final TimerHandler pTimerHandler) 
+	            {
+	                mEngine.unregisterUpdateHandler(pTimerHandler);
+	                // load menu resources, create menu scene
+	                SceneManager.getInstance().createMenuScene();
+	                // set menu scene using scene manager
+	                // disposeSplashScene();
+	                // READ NEXT ARTICLE FOR THIS PART.
+	            }
+	    }));
 		arg1.onPopulateSceneFinished();
 	}
-	/**/
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) 
-	{  
-	    if (keyCode == KeyEvent.KEYCODE_BACK   && event.getAction() == KeyEvent.ACTION_DOWN)
-	    {	    	
-	    	switch (currentScene)
-	    	{
-	    		case SPLASH:
-	    			break;
-	    		case MAIN:
-	    			System.exit(0);
-	    			break;
-	    	}
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		System.exit(0);
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+	    {
+	        SceneManager.getInstance().getCurrentScene().onBackKeyPressed();
 	    }
 	    return false; 
-	}
-	/*Load Resources*/
-	private void loadResources(){
-		
-	}
-
-	private void loadScenes()
-	{
-		// load your game here, you scenes
-		mainScene = new SplashScreen(buttonRegion,this.mEngine);
-		mainScene.setBackground(new Background(0, 241, 231));
-		//mainScene.attachChild(pEntity)
-	}
-	private void initSplashScene()
-	{
-    	splashScene = new Scene();
-    	splash = new Sprite(0, 0, splashTextureRegion, mEngine.getVertexBufferObjectManager())
-    	{
-    		@Override
-            protected void preDraw(GLState pGLState, Camera pCamera) 
-    		{
-                super.preDraw(pGLState, pCamera);
-                pGLState.enableDither();
-            }
-    	};
-    	
-    	splash.setScale(1.5f);
-    	splash.setPosition((CAMERA_WIDTH - splash.getWidth()) * 0.5f, (CAMERA_HEIGHT - splash.getHeight()) * 0.5f);
-    	splashScene.attachChild(splash);
 	}
 }
