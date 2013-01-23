@@ -1,5 +1,7 @@
 package com.game.calctris;
 
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.opengl.texture.TextureOptions;
@@ -20,12 +22,12 @@ public class ResourcesManager {
     //---------------------------------------------
     
     private static final ResourcesManager INSTANCE = new ResourcesManager();
-    
+
     public Engine engine;
-    public CalcTrisGame activity;
+    public CalcTrisGame mainGameActivity;
     public Camera camera;
     public VertexBufferObjectManager vbom;
-    
+    public Music music;
     //---------------------------------------------
     // TEXTURES & TEXTURE REGIONS
     //---------------------------------------------
@@ -57,10 +59,10 @@ public class ResourcesManager {
     private void loadMenuGraphics()
     {
     	BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
-    	menuTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
-    	menu_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "menu_background.png");
-    	play_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play.png");
-    	options_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "options.png");
+    	menuTextureAtlas = new BuildableBitmapTextureAtlas(mainGameActivity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+    	menu_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, mainGameActivity, "base.fw.png");
+    	play_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, mainGameActivity, "play.png");
+    	options_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, mainGameActivity, "options.png");
     	       
     	try 
     	{
@@ -75,7 +77,16 @@ public class ResourcesManager {
     
     private void loadMenuAudio()
     {
-        
+    	MusicFactory.setAssetBasePath("mfx/");
+    	try{
+    		music=MusicFactory.createMusicFromAsset(this.engine.getMusicManager(),mainGameActivity , "FullOn.mp3");
+    		//music.setvo
+    		music.play();
+        }
+        catch (Exception e) {
+			// TODO: handle exception
+        	e.printStackTrace();
+		}
     }
 
     private void loadGameGraphics()
@@ -93,11 +104,14 @@ public class ResourcesManager {
         
     }
     
+    /**
+     *  Load resources (images) for SplashScreen 
+     */
     public void loadSplashScreen()
     {
-    	BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-    	splashTextureAtlas = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
-    	splash_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, activity, "splashB.png", 0, 0);
+    	BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/splash/");
+    	splashTextureAtlas = new BitmapTextureAtlas(mainGameActivity.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+    	splash_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(splashTextureAtlas, mainGameActivity, "splash.png", 0, 0);
     	splashTextureAtlas.load();
     }
     
@@ -119,7 +133,7 @@ public class ResourcesManager {
     public static void prepareManager(Engine engine, CalcTrisGame activity, Camera camera, VertexBufferObjectManager vbom)
     {
         getInstance().engine = engine;
-        getInstance().activity = activity;
+        getInstance().mainGameActivity = activity;
         getInstance().camera = camera;
         getInstance().vbom = vbom;
     }

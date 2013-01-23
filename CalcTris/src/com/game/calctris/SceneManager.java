@@ -18,6 +18,7 @@ public class SceneManager {
  
     private BaseScene splashScene;
     private BaseScene menuScene;
+    private BaseScene helpScene;
     private BaseScene gameScene;
     private BaseScene loadingScene;
     
@@ -29,6 +30,7 @@ public class SceneManager {
         SCENE_MENU,
         SCENE_GAME,
         SCENE_LOADING,
+        SCENE_HELP,
     }
     
     //---------------------------------------------
@@ -58,6 +60,9 @@ public class SceneManager {
             case SCENE_LOADING:
                 setScene(loadingScene);
                 break;
+            case SCENE_HELP:
+            	setScene(helpScene);
+            	break;
             default:
                 break;
         }
@@ -100,5 +105,12 @@ public class SceneManager {
 	    SceneManager.getInstance().setScene(menuScene);
 	    disposeSplashScene();
 	}
+    public void createHelpScene(){
+    	ResourcesManager.getInstance().loadMenuResources();
+	    helpScene = new HelpScene();
+	    //SceneManager.getInstance().getCurrentScene().disposeScene();
+	    SceneManager.getInstance().setScene(helpScene);
+	    //disposeSplashScene();
+    }
    
 }

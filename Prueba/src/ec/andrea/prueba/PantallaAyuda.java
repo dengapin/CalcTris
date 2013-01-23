@@ -21,7 +21,7 @@ import android.content.Intent;
 
 public class PantallaAyuda extends SimpleBaseGameActivity{
 	
-	//Constantes
+	//Constants
 	private static final int CAMERA_WIDTH = 480; //Ancho 480px
     private static final int CAMERA_HEIGHT = 800; //Alto 800px
     
