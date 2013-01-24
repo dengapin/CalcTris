@@ -53,7 +53,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
     private ITextureRegion[] mFondoEsferas = new ITextureRegion[tamarreglo];
     private Scene mScene;
     
-    public PhysicsWorld myPhysicsWorld;
+    private PhysicsWorld myPhysicsWorld;
     
     // ============================================================
     // Method: onCreateEmgineOptions
@@ -124,17 +124,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         PhysicsFactory.createBoxBody(this.myPhysicsWorld,pared2,BodyType.StaticBody,texturepared);
         PhysicsFactory.createBoxBody(this.myPhysicsWorld,pared3,BodyType.StaticBody,texturepared);
         PhysicsFactory.createBoxBody(this.myPhysicsWorld,pared4,BodyType.StaticBody,texturepared);
-        
-        //Creando Sprite para cada esfera, se le hace un merge y se lo integra al mundo con attachChild
-        /*for (int i = 0; i<tamarreglo; i++){
-        	int num = x.nextInt(300);
-        	esf[i] = new Sprite(num, 0, this.mFondoEsferas[i], vertexBufferObjectManager);
-        	body[i] = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esf[i], BodyType.DynamicBody, texturepared);
-        	this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(esf[i],body[i],true,true));
-        	esf[i].setUserData(body[i]);
-        	mScene.attachChild(esf[i]);	
-        }*/
-               
+                    
         mScene.attachChild(pared1);
         mScene.attachChild(pared2);
         mScene.attachChild(pared3);
@@ -157,6 +147,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
             public void onTimePassed(TimerHandler pTimerHandler) {
 				addSpheres();
             }
+			
 		});
 		
 		getEngine().registerUpdateHandler(timeSpheres);
@@ -165,7 +156,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
 	private void addSpheres() {
 		
      	//El body del mundo fisico
-        final Body[] body = new Body[tamarreglo];
+        //final Body[] body = new Body[tamarreglo];
         final Sprite[] esf = new Sprite[tamarreglo];
         final FixtureDef textureEsphere = PhysicsFactory.createFixtureDef(0, 0.1f, 10.0f);
         Random number = new Random();
@@ -182,9 +173,11 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         esferaElegida = new Sprite(num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager());
         esf[aleatorio] = esferaElegida;
         body2 = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esferaElegida, BodyType.DynamicBody, textureEsphere);
+        this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(esferaElegida, body2, true, true));
         esferaElegida.setUserData(body2);
         this.mScene.attachChild(esferaElegida);
-        getEngine().registerUpdateHandler(this.myPhysicsWorld);
+        //this.mScene.registerUpdateHandler(this.myPhysicsWorld);
+        //getEngine().registerUpdateHandler(this.myPhysicsWorld);
     }
 	
 	public void OnResumeGame(){
