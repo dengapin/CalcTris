@@ -28,6 +28,7 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
+import android.content.Intent;
 import android.hardware.SensorManager;
 
 import com.badlogic.gdx.math.Vector2;
@@ -54,6 +55,9 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
     private Scene mScene;
     
     private PhysicsWorld myPhysicsWorld;
+    
+    //Parte lógica
+    public int Matriz[][] = new int[6][16];
     
     // ============================================================
     // Method: onCreateEmgineOptions
@@ -99,11 +103,6 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
 		this.mEngine.registerUpdateHandler(new FPSLogger());
         this.mScene = new Scene();
         final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
-     	//El body del mundo fisico
-        /*final Body[] body = new Body[tamarreglo];
-        final Sprite[] esf = new Sprite[tamarreglo];
-        //Posicion aleatoria para el arreglo
-        Random numArreglo = new Random();*/
         this.myPhysicsWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
                 
         //Para el fondo
@@ -137,9 +136,13 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         return mScene;
 	}
 	
+	/* ======================================================
+	 * Metodo que añade las esferas por un lapso de 5 segundo
+	 ========================================================*/
 	public void createSpheresbyTimeHandler(){
+		
 		TimerHandler timeSpheres;
-		float mEffectSpawnDelay = 10f;
+		float mEffectSpawnDelay = 5f;
 
 		
 		timeSpheres = new TimerHandler(mEffectSpawnDelay, true, new ITimerCallback(){
@@ -147,21 +150,21 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
             public void onTimePassed(TimerHandler pTimerHandler) {
 				addSpheres();
             }
-			
 		});
-		
 		getEngine().registerUpdateHandler(timeSpheres);
 	}
 	
+	/* =====================================================
+	 * Metodo que me crea cada esfera y las agrega al mScene
+	 =======================================================*/
 	private void addSpheres() {
 		
      	//El body del mundo fisico
-        //final Body[] body = new Body[tamarreglo];
         final Sprite[] esf = new Sprite[tamarreglo];
-        final FixtureDef textureEsphere = PhysicsFactory.createFixtureDef(0, 0.1f, 10.0f);
+        final FixtureDef textureEsphere = PhysicsFactory.createFixtureDef(0f, 0.1f, 100.0f);
         Random number = new Random();
         final Sprite esferaElegida;
-        final Body body2;
+        final Body body;
 		Random px = new Random();
 		final int py = 0;
 		final int num = px.nextInt(300);
@@ -170,17 +173,60 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         	esf[i] = new Sprite(num, py, this.mFondoEsferas[i], this.getVertexBufferObjectManager());
         }
         int aleatorio = number.nextInt(8);
-        esferaElegida = new Sprite(num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager());
+        esferaElegida = new Sprite(num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager()){
+        	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		if(pSceneTouchEvent.isActionDown()){
+        			//esferaElegida.setPosition(pTouchAreaLocalX, pTouchAreaLocalY);
+        			//Colocar esta funcion afuera como publica y agregar el parametro ITouchArea
+        			//Y poner en registertouchArea(Sprite);
+        		}
+        		return true;
+        	}
+        };//Hay que registrarle el evento TOUCH
         esf[aleatorio] = esferaElegida;
-        body2 = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esferaElegida, BodyType.DynamicBody, textureEsphere);
-        this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(esferaElegida, body2, true, true));
-        esferaElegida.setUserData(body2);
+        body = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esferaElegida, BodyType.DynamicBody, textureEsphere);
+        this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(esferaElegida, body, true, true));
+        esferaElegida.setUserData(body);
         this.mScene.attachChild(esferaElegida);
-        //this.mScene.registerUpdateHandler(this.myPhysicsWorld);
-        //getEngine().registerUpdateHandler(this.myPhysicsWorld);
+        InicializarMatriz();
+        Matriz[num][py] = aleatorio;//Tengo q ponerle los valores actuales a la matriz.
+
     }
 	
+	/* ==================================================
+	 * Metodo que me inicializa la matriz con el valor -1
+	 ====================================================*/
+	public void InicializarMatriz(){
+		
+		for(int i=0; i<Matriz.length; i++){
+			for(int j=0; j<Matriz[i].length; j++){
+				Matriz[i][j] = -1;
+			}
+		}
+	}
+	
+	/* ====================================================================================
+	 * Metodo boleano que verifica si esta en el borde y si esta disponible la celda actual
+	 ======================================================================================*/
+	public int esta_vacia(final int x, final int y, int [][] Matriz){
+		
+		//Verifica si esta dentro de la matriz
+		if ((y<0) || (x<0)){
+			return 1;
+		}
+		else{
+			//pregunta si la celda esta libre o no libre
+			if(Matriz[x][y] == -1){
+				return 1;
+			}
+			else{
+				return -1;
+			}
+		}
+	}
+	
 	public void OnResumeGame(){
+		
 		super.onResumeGame();
 		this.enableAccelerationSensor(this);
 	}
