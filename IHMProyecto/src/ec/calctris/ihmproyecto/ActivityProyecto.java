@@ -8,6 +8,8 @@ import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
+import org.andengine.entity.modifier.MoveXModifier;
+import org.andengine.entity.modifier.MoveYModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -28,7 +30,6 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
-import android.content.Intent;
 import android.hardware.SensorManager;
 
 import com.badlogic.gdx.math.Vector2;
@@ -173,20 +174,12 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         	esf[i] = new Sprite(num, py, this.mFondoEsferas[i], this.getVertexBufferObjectManager());
         }
         int aleatorio = number.nextInt(8);
-        esferaElegida = new Sprite(num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager()){
-        	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
-        		if(pSceneTouchEvent.isActionDown()){
-        			//esferaElegida.setPosition(pTouchAreaLocalX, pTouchAreaLocalY);
-        			//Colocar esta funcion afuera como publica y agregar el parametro ITouchArea
-        			//Y poner en registertouchArea(Sprite);
-        		}
-        		return true;
-        	}
-        };//Hay que registrarle el evento TOUCH
+        esferaElegida = new Sprite(num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager());
         esf[aleatorio] = esferaElegida;
         body = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esferaElegida, BodyType.DynamicBody, textureEsphere);
         this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(esferaElegida, body, true, true));
         esferaElegida.setUserData(body);
+        this.mScene.registerTouchArea(esferaElegida);
         this.mScene.attachChild(esferaElegida);
         InicializarMatriz();
         Matriz[num][py] = aleatorio;//Tengo q ponerle los valores actuales a la matriz.
@@ -223,6 +216,16 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
 				return -1;
 			}
 		}
+	}  
+	
+	/* ===========================================
+	 * Metodo boleano para las posiciones actuales
+	 =============================================*/
+	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY, Sprite esfera){
+		if(pSceneTouchEvent.isActionDown()){
+			esfera.setPosition(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+        }
+	   return true;
 	}
 	
 	public void OnResumeGame(){
