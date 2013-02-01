@@ -8,10 +8,9 @@ import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
-import org.andengine.entity.modifier.MoveXModifier;
-import org.andengine.entity.modifier.MoveYModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
+import org.andengine.entity.scene.ITouchArea;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
@@ -30,6 +29,7 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
+import android.content.Intent;
 import android.hardware.SensorManager;
 
 import com.badlogic.gdx.math.Vector2;
@@ -37,7 +37,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
-public class ActivityProyecto extends SimpleBaseGameActivity implements IAccelerationListener, IOnSceneTouchListener {
+public class ActivityProyecto extends SimpleBaseGameActivity implements IAccelerationListener, IOnSceneTouchListener{
 
 	//Constantes
 	private static final int CAMERA_WIDTH = 480; //Ancho 480px
@@ -51,10 +51,13 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
     private BitmapTextureAtlas mNube;
     private ITextureRegion mNubeRegion;
     
+    private BitmapTextureAtlas mBoton;//Arreglo de botones
+    private ITextureRegion mPausa;//BotonJugar
+    
     private BitmapTextureAtlas mEsferas;
     private ITextureRegion[] mFondoEsferas = new ITextureRegion[tamarreglo];
-    private Scene mScene;
     
+    private Scene mScene;
     private PhysicsWorld myPhysicsWorld;
     
     //Parte lógica
@@ -63,31 +66,36 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
     // ============================================================
     // Method: onCreateEmgineOptions
     // ============================================================
-	@Override
-	public EngineOptions onCreateEngineOptions() {
-		
-		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);      
-	}
+    @Override
+    public EngineOptions onCreateEngineOptions() {
+        
+    	final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);        
+    }
 
-	// ============================================================
+    // ============================================================
     // Method: onCreateResources
     // ============================================================
-	@Override
-	protected void onCreateResources() {
-		
-		//Obteniendo la carpeta donde estaran las imagenes
+    @Override
+    public void onCreateResources() {
+    	
+    	//Obteniendo la carpeta donde estaran las imagenes
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         
         //Para el fondo
         this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 480, 800, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
         this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "PantallaGame.png", 0, 0);
         this.mFondo.load();//Cargo la imagen
-
-	    //Para el fondo con la nube en movimiento
-	    this.mNube = new BitmapTextureAtlas(this.getTextureManager(), 227, 85, TextureOptions.BILINEAR);
-	    this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nubes_pequenas.png", 0, 0);
-	    this.mNube.load();
+        
+        //Para el fondo con la nube en movimiento
+        this.mNube = new BitmapTextureAtlas(this.getTextureManager(), 227, 85, TextureOptions.BILINEAR);
+        this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nubes_pequenas.png", 0, 0);
+        this.mNube.load();
+        
+        //Para los botones
+        this.mBoton = new BitmapTextureAtlas(this.getTextureManager(),50, 50, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
+        this.mPausa = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBoton, this, "BotonPausa.png", 0, 0);
+        this.mBoton.load();
         
         //Para las esferas
 		this.mEsferas = new BitmapTextureAtlas(this.getTextureManager(), 50, 450, TextureOptions.BILINEAR);
@@ -96,23 +104,41 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
 			this.mFondoEsferas[i] = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mEsferas, this, ruta[i], 0, i*50);
 		}
 		this.mEsferas.load();
-	}
+    }
 
-	@Override
-	protected Scene onCreateScene() {
-		
-		this.mEngine.registerUpdateHandler(new FPSLogger());
+    // ============================================================
+    // Method: onCreateScene
+    // ============================================================
+    @Override
+    public Scene onCreateScene() {
+        
+    	this.mEngine.registerUpdateHandler(new FPSLogger());
         this.mScene = new Scene();
+        
         final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
         this.myPhysicsWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
-                
+        this.mScene.setOnSceneTouchListener(this);
+        
         //Para el fondo
         final AutoParallaxBackground fondo = new AutoParallaxBackground(0, 0, 0, 5);
         fondo.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0,0, this.mFondoRegion, vertexBufferObjectManager)));
         fondo.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, 0, this.mNubeRegion, vertexBufferObjectManager)));
         mScene.setBackground(fondo);
-       
-		//El mundo físico
+        
+        //Para los botones
+        //BotonJugar
+        final Sprite boton1 = new Sprite(370, 400, this.mPausa, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		Intent intent = new Intent (ActivityProyecto.this, PantallaPausa.class);
+        		startActivity(intent);
+        		return true;
+        	}
+        };
+        mScene.registerTouchArea(boton1);//Se registra el evento
+        mScene.attachChild(boton1);//Se lo agrega a la escena
+
+        //El mundo físico
         final Rectangle pared1 = new Rectangle(0, 0, 1, CAMERA_HEIGHT, vertexBufferObjectManager);
         final Rectangle pared2 = new Rectangle(0, CAMERA_HEIGHT, 317, 1, vertexBufferObjectManager);
         final Rectangle pared3 = new Rectangle(317, 0, 1, CAMERA_HEIGHT, vertexBufferObjectManager);
@@ -129,22 +155,23 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         mScene.attachChild(pared2);
         mScene.attachChild(pared3);
         mScene.attachChild(pared4);
-        createSpheresbyTimeHandler();
+                                        
+        addSpheres();
+        //createSpheresbyTimeHandler();
         
         //Se retorna
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         this.mScene.registerUpdateHandler(this.myPhysicsWorld);
         return mScene;
-	}
-	
-	/* ======================================================
+    }
+    
+    /* ======================================================
 	 * Metodo que añade las esferas por un lapso de 5 segundo
 	 ========================================================*/
 	public void createSpheresbyTimeHandler(){
 		
 		TimerHandler timeSpheres;
 		float mEffectSpawnDelay = 5f;
-
 		
 		timeSpheres = new TimerHandler(mEffectSpawnDelay, true, new ITimerCallback(){
 			@Override
@@ -162,7 +189,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
 		
      	//El body del mundo fisico
         final Sprite[] esf = new Sprite[tamarreglo];
-        final FixtureDef textureEsphere = PhysicsFactory.createFixtureDef(0f, 0.1f, 100.0f);
+        final FixtureDef textureEsphere = PhysicsFactory.createFixtureDef(0f, 0f, 100.0f);
         Random number = new Random();
         final Sprite esferaElegida;
         final Body body;
@@ -174,18 +201,28 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
         	esf[i] = new Sprite(num, py, this.mFondoEsferas[i], this.getVertexBufferObjectManager());
         }
         int aleatorio = number.nextInt(8);
-        esferaElegida = new Sprite(num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager());
+        esferaElegida = new Sprite(num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager()){
+        	@Override
+        	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+        		this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
+        		return true;
+        	}
+
+        };
         esf[aleatorio] = esferaElegida;
         body = PhysicsFactory.createBoxBody(this.myPhysicsWorld, esferaElegida, BodyType.DynamicBody, textureEsphere);
         this.myPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(esferaElegida, body, true, true));
         esferaElegida.setUserData(body);
-        this.mScene.registerTouchArea(esferaElegida);
-        this.mScene.attachChild(esferaElegida);
+        this.mScene.attachChild(esferaElegida);//Se lo agrega al mundo visual
+        this.mScene.registerTouchArea(esferaElegida);//Se registra el evento del touch para la esfera Elegida
+        this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);//Enabled touch binding.
+        
+        //Parte Lógica
         InicializarMatriz();
-        Matriz[num][py] = aleatorio;//Tengo q ponerle los valores actuales a la matriz.
-
+        //Matriz[num][py] = aleatorio;//Tengo q ponerle los valores actuales a la matriz.
     }
 	
+
 	/* ==================================================
 	 * Metodo que me inicializa la matriz con el valor -1
 	 ====================================================*/
@@ -218,20 +255,36 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
 		}
 	}  
 	
-	/* ===========================================
-	 * Metodo boleano para las posiciones actuales
-	 =============================================*/
-	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY, Sprite esfera){
-		if(pSceneTouchEvent.isActionDown()){
-			esfera.setPosition(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
-        }
-	   return true;
+	/* =====================================
+	 * Metodo para el touch en cada Sprite
+	 ==================================== */
+	public boolean onAreaTouched( final TouchEvent pSceneTouchEvent, final ITouchArea pTouchArea,final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+		if(pSceneTouchEvent.isActionDown()) {
+			
+		}
+
+		return false;
 	}
 	
 	public void OnResumeGame(){
-		
 		super.onResumeGame();
 		this.enableAccelerationSensor(this);
+	}
+	
+	public void OnPauseGame(){
+		super.onPauseGame();
+		this.disableAccelerationSensor();
+	}
+
+	@Override
+	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
+		/*if(this.myPhysicsWorld != null) {
+			if(pSceneTouchEvent.isActionDown()) {
+				this.addSpheres();
+				return true;
+			}
+		}*/
+		return false;
 	}
 
 	@Override
@@ -245,15 +298,5 @@ public class ActivityProyecto extends SimpleBaseGameActivity implements IAcceler
 		// TODO Auto-generated method stub
 		
 	}
-	
-	public void OnPauseGame(){
-		super.onPauseGame();
-		this.disableAccelerationSensor();
-	}
 
-	@Override
-	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }
