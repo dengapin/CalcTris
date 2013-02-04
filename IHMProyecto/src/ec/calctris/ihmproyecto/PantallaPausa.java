@@ -38,6 +38,9 @@ public class PantallaPausa extends SimpleBaseGameActivity{
     private ITextureRegion mBoton3;//BotonTutorial
     private ITextureRegion mBoton4;//BotonHome
 
+    private BitmapTextureAtlas mSonido;
+    private ITextureRegion mSonidoRegionOn;
+    
     private Scene mScene;
     
     // ============================================================
@@ -47,7 +50,9 @@ public class PantallaPausa extends SimpleBaseGameActivity{
 	public EngineOptions onCreateEngineOptions() {
 		
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera); 
+    	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+        return engineOptions; 
 	}
 
 	@Override
@@ -73,7 +78,11 @@ public class PantallaPausa extends SimpleBaseGameActivity{
         this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonTutorial.png", 0, 90);//BotonTutorial
         this.mBoton4 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "home2.png", 0, 135);//BotonHome
         this.mBotones.load();
-		
+        
+        //Para el boton del sonido
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+        this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
+        this.mSonido.load();
 	}
 
 	// ============================================================
@@ -134,7 +143,11 @@ public class PantallaPausa extends SimpleBaseGameActivity{
         };
         this.mScene.registerTouchArea(boton4);
         this.mScene.attachChild(boton4);
-                                
+        //BotonSonido
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        mScene.registerTouchArea(On);
+        mScene.attachChild(On);
+                                        
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;
 	}

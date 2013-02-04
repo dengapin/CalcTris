@@ -29,6 +29,9 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
     private BitmapTextureAtlas mNube;
     private ITextureRegion mNubeRegion;
     
+    private BitmapTextureAtlas mSonido;
+    private ITextureRegion mSonidoRegionOn;
+        
     private Scene mScene;
 	
     // ============================================================
@@ -38,7 +41,9 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
 	public EngineOptions onCreateEngineOptions() {
 		
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+    	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+        return engineOptions;
 	}
 
 	// ============================================================
@@ -59,7 +64,12 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
         this.mNube = new BitmapTextureAtlas(this.getTextureManager(), 227, 85, TextureOptions.BILINEAR);
         this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nubes_pequenas.png", 0, 0);
         this.mNube.load();
-		
+        
+        //Para el boton del sonido
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+        this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
+        this.mSonido.load();
+        
 	}
 
 	@Override
@@ -75,7 +85,11 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
         fondo.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0,0, this.mFondoRegion, vertexBufferObjectManager)));
         fondo.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, 0, this.mNubeRegion, vertexBufferObjectManager)));
         this.mScene.setBackground(fondo);
-        
+        //BotonSonido
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        mScene.registerTouchArea(On);
+        mScene.attachChild(On);
+                
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;
 	}

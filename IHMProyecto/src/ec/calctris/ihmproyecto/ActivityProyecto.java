@@ -1,6 +1,9 @@
 package ec.calctris.ihmproyecto;
 
+import java.io.IOException;
+
 import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -23,29 +26,26 @@ import android.content.Intent;
 public class ActivityProyecto extends SimpleBaseGameActivity {
 
 	//Constantes
-	private static final int CAMERA_WIDTH = 480; //Ancho 480px
-    private static final int CAMERA_HEIGHT = 800; //Alto 800px
+	private static final int CAMERA_WIDTH = 480;							//Ancho 480px
+    private static final int CAMERA_HEIGHT = 800;							//Alto 800px
 
     //Variables
-    private BitmapTextureAtlas mFondo;//Arreglo de fondo
-    private ITextureRegion mFondoRegion;//Texture del fondo
+    private BitmapTextureAtlas mFondo;										//Arreglo de fondo
+    private ITextureRegion mFondoRegion;									//Texture del fondo
     
     private BitmapTextureAtlas mNube;
     private ITextureRegion mNubeRegion;
     
-    private BitmapTextureAtlas mBotones;//Arreglo de botones
-    private ITextureRegion mBoton1;//BotonJugar
-    private ITextureRegion mBoton2;//BotonPuntajes
-    private ITextureRegion mBoton3;//BotonAyuda
+    private BitmapTextureAtlas mBotones;									//Arreglo de botones
+    private ITextureRegion mBoton1;											//BotonJugar
+    private ITextureRegion mBoton2;											//BotonPuntajes
+    private ITextureRegion mBoton3;											//BotonAyuda
     
     private BitmapTextureAtlas mSonido;
     private ITextureRegion mSonidoRegionOn;
-    private ITextureRegion mSonidoRegionOff;
-
-    private Scene mScene;
+    public Music mMusic;
     
-    private Music mMusic;
-
+    private Scene mScene;
     
     // ============================================================
     // Method: onCreateEmgineOptions
@@ -54,7 +54,9 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
     public EngineOptions onCreateEngineOptions() {
         
     	final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);        
+    	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+        return engineOptions;        
     }
 
     // ============================================================
@@ -84,10 +86,19 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
         this.mBotones.load();
         
         //Para el boton del sonido
-        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 100, TextureOptions.BILINEAR);
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
         this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
-        this.mSonidoRegionOff = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOff.png", 0, 50);
         this.mSonido.load();
+        
+        //Play the music
+        MusicFactory.setAssetBasePath("mfx/");
+		try {
+			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "MusicaFondo.ogg");
+			this.mMusic.setLooping(true);
+		} catch (final IOException e) {
+			//Debug.e("Error", e);
+		}
+		mMusic.play();
     }
 
     // ============================================================
@@ -125,6 +136,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (ActivityProyecto.this, PantallaPuntajes.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -136,6 +148,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (ActivityProyecto.this, PantallaAyuda.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -143,7 +156,20 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
         mScene.attachChild(boton3);
         
         //BotonSonido
-        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		if(pSceneTouchEvent.isActionDown()) {
+					if(ActivityProyecto.this.mMusic.isPlaying()) {
+						ActivityProyecto.this.mMusic.pause();
+					} else {
+						ActivityProyecto.this.mMusic.play();
+					}
+				}
+				return true;
+        	}
+        };
+        mScene.registerTouchArea(On);
         mScene.attachChild(On);
                                         
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);

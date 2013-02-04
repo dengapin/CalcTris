@@ -63,6 +63,9 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
     private ITextureRegion[] mFondoEsferas = new ITextureRegion[tamarreglo];
     private List<Sprite>mSpheres;
     
+    private BitmapTextureAtlas mSonido;
+    private ITextureRegion mSonidoRegionOn;
+    
     private Scene mScene;
     private PhysicsWorld myPhysicsWorld;
     
@@ -77,7 +80,9 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
     public EngineOptions onCreateEngineOptions() {
         
     	final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);        
+    	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+        return engineOptions;            
     }
 
     // ============================================================
@@ -112,6 +117,11 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
 			this.valores[i] = i;
 		}
 		this.mEsferas.load();
+		
+		//Para el boton del sonido
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+        this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
+        this.mSonido.load();
 	}
 
     // ============================================================
@@ -146,7 +156,11 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
         };
         mScene.registerTouchArea(boton1);//Se registra el evento
         mScene.attachChild(boton1);//Se lo agrega a la escena
-
+        //BotonSonido
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        mScene.registerTouchArea(On);
+        mScene.attachChild(On);
+        
         //El mundo físico
         final Rectangle pared1 = new Rectangle(0, 0, 1, CAMERA_HEIGHT, vertexBufferObjectManager);
         final Rectangle pared2 = new Rectangle(0, CAMERA_HEIGHT, 317, 1, vertexBufferObjectManager);

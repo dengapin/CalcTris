@@ -36,7 +36,10 @@ public class PantallaNivel extends SimpleBaseGameActivity{
     private ITextureRegion mBoton1;//BotonNivel1
     private ITextureRegion mBoton2;//BotonNivel2
     private ITextureRegion mBoton3;//BotonAtras
-
+    
+    private BitmapTextureAtlas mSonido;
+    private ITextureRegion mSonidoRegionOn;
+    
     private Scene mScene;
 
     // ============================================================
@@ -46,7 +49,9 @@ public class PantallaNivel extends SimpleBaseGameActivity{
 	public EngineOptions onCreateEngineOptions() {
 
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+    	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+        return engineOptions;
 	}
 
 	// ============================================================
@@ -74,8 +79,13 @@ public class PantallaNivel extends SimpleBaseGameActivity{
         this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonNivel2.png", 0, 45);//BotoneNivel2
         this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAtras.png", 0, 90);//BotonAtras
         this.mBotones.load();
-		
-	}
+        
+        //Para el boton del sonido
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+        this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
+        this.mSonido.load();
+        
+   }
 
 	@Override
 	protected Scene onCreateScene() {
@@ -126,7 +136,11 @@ public class PantallaNivel extends SimpleBaseGameActivity{
         this.mScene.registerTouchArea(boton3);//Se registra el evento
         this.mScene.setTouchAreaBindingOnActionDownEnabled(true);
         this.mScene.attachChild(boton3);
-                                
+        //BotonSonido
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        mScene.registerTouchArea(On);
+        mScene.attachChild(On);
+        
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;
 

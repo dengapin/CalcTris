@@ -37,6 +37,9 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
     private ITextureRegion mBoton2;//BotonTutotial
     private ITextureRegion mBoton3;//BotonAtras
 
+    private BitmapTextureAtlas mSonido;
+    private ITextureRegion mSonidoRegionOn;
+    
     private Scene mScene;
 
     // ============================================================
@@ -73,6 +76,11 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonTutorial.png", 0, 45);//BotonTutorial
         this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAtras.png", 0, 90);//BotonAtras
         this.mBotones.load();
+        
+        //Para el boton del sonido
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+        this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
+        this.mSonido.load();
 		
 	}
 
@@ -124,6 +132,10 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         };
         this.mScene.registerTouchArea(boton3);//Se registra el evento
         this.mScene.attachChild(boton3);
+        //BotonSonido
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        mScene.registerTouchArea(On);
+        mScene.attachChild(On);
                                 
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;

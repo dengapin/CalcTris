@@ -36,6 +36,9 @@ public class PantallaJugar extends SimpleBaseGameActivity{
     
     private BitmapTextureAtlas mNube;
     private ITextureRegion mNubeRegion;
+    
+    private BitmapTextureAtlas mSonido;
+    private ITextureRegion mSonidoRegionOn;
 
     private Scene mScene;
 
@@ -45,7 +48,9 @@ public class PantallaJugar extends SimpleBaseGameActivity{
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+    	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+        return engineOptions;
 	}
 
     // ============================================================
@@ -72,7 +77,11 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonContinuar.png", 0, 45);//BotonContinuar
         this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAtras.png", 0, 90);//BotonAtras
         this.mBotones.load();
-		
+        
+        //Para el boton del sonido
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+        this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
+        this.mSonido.load();
 	}
 
     // ============================================================
@@ -99,6 +108,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaJugar.this, PantallaSeleccionar.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -110,6 +120,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaJugar.this, PantallaGame.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -126,7 +137,11 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         };
         this.mScene.registerTouchArea(boton3);//Se registra el evento
         this.mScene.attachChild(boton3);
-                                
+        //BotonSonido
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        mScene.registerTouchArea(On);
+        mScene.attachChild(On);
+                                        
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;
 	}

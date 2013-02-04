@@ -32,6 +32,9 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
     private BitmapTextureAtlas mBotones;//Arreglo de botones
     private ITextureRegion mBoton1;//BotonAtras
     
+    private BitmapTextureAtlas mSonido;
+    private ITextureRegion mSonidoRegionOn;
+     
     private Scene mScene;
 
     // ============================================================
@@ -39,8 +42,11 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
     // ============================================================
 	@Override
 	public EngineOptions onCreateEngineOptions() {
+		
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+    	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+        return engineOptions;
 	}
 
     // ============================================================
@@ -67,7 +73,11 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
         //Buscar la imagen Boton Atras
         this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAyuda.png", 0, 0);//BotonAtras
         this.mBotones.load();
-		
+        	
+        //Para el boton del sonido
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+        this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
+        this.mSonido.load();
 	}
 
     // ============================================================
@@ -91,7 +101,11 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
         //Colocar nuevas coordenadas
         final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager);
         this.mScene.attachChild(boton1);
-                                        
+        //BotonSonido
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        mScene.registerTouchArea(On);
+        mScene.attachChild(On);
+                                                
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;
 	}
