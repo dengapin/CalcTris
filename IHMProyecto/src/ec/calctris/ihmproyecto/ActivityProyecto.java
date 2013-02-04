@@ -40,10 +40,11 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
     private ITextureRegion mBoton1;											//BotonJugar
     private ITextureRegion mBoton2;											//BotonPuntajes
     private ITextureRegion mBoton3;											//BotonAyuda
+    private ITextureRegion mBoton4;											//BotonSalir
     
     private BitmapTextureAtlas mSonido;
     private ITextureRegion mSonidoRegionOn;
-    public Music mMusic;
+    public Music mMusic;													//Variable para la musica
     
     private Scene mScene;
     
@@ -79,10 +80,11 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
         this.mNube.load();
         
         //Para los botones
-        this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 135, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
+        this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 180, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
         this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonJugar.png", 0, 0);
         this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonPuntajes.png", 0, 45);
         this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAyuda.png", 0, 90);
+        this.mBoton4 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonSalida.png", 0, 135);
         this.mBotones.load();
         
         //Para el boton del sonido
@@ -136,7 +138,6 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (ActivityProyecto.this, PantallaPuntajes.class);
         		startActivity(intent);
-        		finish();
         		return true;
         	}
         };
@@ -148,13 +149,21 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (ActivityProyecto.this, PantallaAyuda.class);
         		startActivity(intent);
-        		finish();
         		return true;
         	}
         };
         mScene.registerTouchArea(boton3);
         mScene.attachChild(boton3);
-        
+      //BotonSalida
+        final Sprite boton4 = new Sprite(0, CAMERA_HEIGHT - this.mBoton4.getHeight() - 390 + 165, this.mBoton4, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		finish();
+        		return true;
+        	}
+        };
+        mScene.registerTouchArea(boton4);
+        mScene.attachChild(boton4);
         //BotonSonido
         final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager){
         	@Override

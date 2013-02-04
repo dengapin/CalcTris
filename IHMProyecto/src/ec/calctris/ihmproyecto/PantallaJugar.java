@@ -41,6 +41,8 @@ public class PantallaJugar extends SimpleBaseGameActivity{
     private ITextureRegion mSonidoRegionOn;
 
     private Scene mScene;
+    
+    private ActivityProyecto Musica;
 
     // ============================================================
     // Method: onCreateEmgineOptions
@@ -81,7 +83,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         //Para el boton del sonido
         this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
         this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
-        this.mSonido.load();
+        this.mSonido.load();      
 	}
 
     // ============================================================
@@ -108,7 +110,6 @@ public class PantallaJugar extends SimpleBaseGameActivity{
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaJugar.this, PantallaSeleccionar.class);
         		startActivity(intent);
-        		finish();
         		return true;
         	}
         };
@@ -120,7 +121,6 @@ public class PantallaJugar extends SimpleBaseGameActivity{
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaJugar.this, PantallaGame.class);
         		startActivity(intent);
-        		finish();
         		return true;
         	}
         };
@@ -138,12 +138,23 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         this.mScene.registerTouchArea(boton3);//Se registra el evento
         this.mScene.attachChild(boton3);
         //BotonSonido
-        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		if(pSceneTouchEvent.isActionDown()) {
+					if(Musica.mMusic.isPlaying()) {
+						Musica.mMusic.pause();
+					} else {
+						Musica.mMusic.play();
+					}
+				}
+				return true;
+        	}
+        };
         mScene.registerTouchArea(On);
         mScene.attachChild(On);
                                         
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;
 	}
-
 }
