@@ -46,7 +46,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
     private ITextureRegion mSonidoRegionOn;
     public Music mMusic;													//Variable para la musica
     
-    private Scene mScene;
+    private Scene mScene;  
     
     // ============================================================
     // Method: onCreateEmgineOptions
@@ -71,7 +71,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
         
         //Para el fondo
         this.mFondo = new BitmapTextureAtlas(this.getTextureManager(), 480, 800, TextureOptions.BILINEAR);//Arreglo donde almaceno la imagen
-        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "PantallaInicial.png", 0, 0);
+        this.mFondoRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mFondo, this, "PantallaInicial.png", 0, 0);//
         this.mFondo.load();//Cargo la imagen
         
         //Para el fondo con la nube en movimiento
@@ -127,6 +127,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (ActivityProyecto.this, PantallaJugar.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -138,6 +139,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (ActivityProyecto.this, PantallaPuntajes.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -149,12 +151,13 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (ActivityProyecto.this, PantallaAyuda.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
         mScene.registerTouchArea(boton3);
         mScene.attachChild(boton3);
-      //BotonSalida
+        //BotonSalida
         final Sprite boton4 = new Sprite(0, CAMERA_HEIGHT - this.mBoton4.getHeight() - 390 + 165, this.mBoton4, vertexBufferObjectManager){
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
@@ -180,7 +183,7 @@ public class ActivityProyecto extends SimpleBaseGameActivity {
         };
         mScene.registerTouchArea(On);
         mScene.attachChild(On);
-                                        
+        
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return mScene;
     }

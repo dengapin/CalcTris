@@ -114,7 +114,6 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
 		this.mScene.attachChild(centerText);
 		
         //Para los botones
-        //Colocar nuevas coordenadas
         final Sprite boton1 = new Sprite(0, 50, this.mBoton1, vertexBufferObjectManager){
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){

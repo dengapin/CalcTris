@@ -1,9 +1,12 @@
 package ec.calctris.ihmproyecto;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -68,6 +71,7 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
     
     private Scene mScene;
     private PhysicsWorld myPhysicsWorld;
+    public Music mMusic;
     
     //Parte lógica
     public int [][] Matriz = new int[6][16];
@@ -122,6 +126,16 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
         this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
         this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
         this.mSonido.load();
+        
+        //Play the music
+        MusicFactory.setAssetBasePath("mfx/");
+		try {
+			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "SoundGame1.ogg");
+			this.mMusic.setLooping(true);
+		} catch (final IOException e) {
+			//Debug.e("Error", e);
+		}
+		mMusic.play();
 	}
 
     // ============================================================
@@ -144,20 +158,31 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
         mScene.setBackground(fondo);
         
         //Para los botones
-        //BotonJugar
-        final Sprite boton1 = new Sprite(370, 400, this.mPausa, vertexBufferObjectManager){
+        //BotonPausa
+        final Sprite botonPause = new Sprite(370, 400, this.mPausa, vertexBufferObjectManager){
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaGame.this, PantallaPausa.class);
         		startActivity(intent);
         		return true;
         	}
-        	
         };
-        mScene.registerTouchArea(boton1);//Se registra el evento
-        mScene.attachChild(boton1);//Se lo agrega a la escena
+        mScene.registerTouchArea(botonPause);//Se registra el evento
+        mScene.attachChild(botonPause);//Se lo agrega a la escena
         //BotonSonido
-        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		if(pSceneTouchEvent.isActionDown()) {
+					if(PantallaGame.this.mMusic.isPlaying()) {
+						PantallaGame.this.mMusic.pause();
+					} else {
+						PantallaGame.this.mMusic.play();
+					}
+				}
+				return true;
+        	}
+        };
         mScene.registerTouchArea(On);
         mScene.attachChild(On);
         

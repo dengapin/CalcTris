@@ -1,5 +1,9 @@
 package ec.calctris.ihmproyecto;
 
+import java.io.IOException;
+
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -8,13 +12,21 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.Text;
+import org.andengine.entity.text.TextOptions;
 import org.andengine.entity.util.FPSLogger;
+import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
+import org.andengine.util.HorizontalAlign;
+
+import android.content.Intent;
+import android.graphics.Typeface;
 
 public class PantallaTutorial extends SimpleBaseGameActivity{
 
@@ -29,10 +41,16 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
     private BitmapTextureAtlas mNube;
     private ITextureRegion mNubeRegion;
     
+    private BitmapTextureAtlas mBotones;									//Arreglo de botones
+    private ITextureRegion mBoton1;	
+    
     private BitmapTextureAtlas mSonido;
     private ITextureRegion mSonidoRegionOn;
+    public Music mMusic;
         
     private Scene mScene;
+    
+    private org.andengine.opengl.font.Font mfont;
 	
     // ============================================================
     // Method: onCreateEmgineOptions
@@ -43,7 +61,7 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
     	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
 		engineOptions.getAudioOptions().setNeedsMusic(true);
-        return engineOptions;
+        return engineOptions; 
 	}
 
 	// ============================================================
@@ -65,11 +83,29 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
         this.mNubeRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mNube, this, "Nubes_pequenas.png", 0, 0);
         this.mNube.load();
         
+        //Para los botones
+        this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 45, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
+        this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAtras.png", 0, 0);
+        this.mBotones.load();
+        
         //Para el boton del sonido
         this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
         this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
         this.mSonido.load();
         
+        //Para el texto
+        this.mfont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 20);
+		this.mfont.load();
+		
+		//Play the music
+        MusicFactory.setAssetBasePath("mfx/");
+		try {
+			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "MusicaFondo.ogg");
+			this.mMusic.setLooping(true);
+		} catch (final IOException e) {
+			//Debug.e("Error", e);
+		}
+		mMusic.play();
 	}
 
 	@Override
@@ -85,10 +121,40 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
         fondo.attachParallaxEntity(new ParallaxEntity(0.0f, new Sprite(0,0, this.mFondoRegion, vertexBufferObjectManager)));
         fondo.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, 0, this.mNubeRegion, vertexBufferObjectManager)));
         this.mScene.setBackground(fondo);
+        
+        //BotonAtras
+        final Sprite boton1 = new Sprite(0, 50, this.mBoton1, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		Intent intent = new Intent (PantallaTutorial.this, PantallaAyuda.class);
+        		startActivity(intent);
+        		finish();
+        		return true;
+        	}
+        };
+        mScene.registerTouchArea(boton1);//Se registra el evento
+        mScene.attachChild(boton1);
+        
         //BotonSonido
-        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		if(pSceneTouchEvent.isActionDown()) {
+					if(PantallaTutorial.this.mMusic.isPlaying()) {
+						PantallaTutorial.this.mMusic.pause();
+					} else {
+						PantallaTutorial.this.mMusic.play();
+					}
+				}
+				return true;
+        	}
+        };
         mScene.registerTouchArea(On);
         mScene.attachChild(On);
+        
+        //Para el texto de Acerca De
+        final Text centerText = new Text(60, 290, this.mfont, "Para este juego se hace\n se tienen que formar con dos\n números la suma o resta de un tercero\n de manera vertical. Se puede mover las\n esferas a cualquier posicion de la\n pantalla con solo tocar las esferas.\n ", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+        mScene.attachChild(centerText);
                 
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;

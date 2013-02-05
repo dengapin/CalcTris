@@ -1,5 +1,9 @@
 package ec.calctris.ihmproyecto;
 
+import java.io.IOException;
+
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -41,9 +45,8 @@ public class PantallaJugar extends SimpleBaseGameActivity{
     private ITextureRegion mSonidoRegionOn;
 
     private Scene mScene;
+    public Music mMusic;
     
-    private ActivityProyecto Musica;
-
     // ============================================================
     // Method: onCreateEmgineOptions
     // ============================================================
@@ -60,6 +63,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
     // ============================================================
 	@Override
 	protected void onCreateResources() {
+		
 		//Obteniendo la carpeta donde estaran las imagenes
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
         
@@ -83,7 +87,17 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         //Para el boton del sonido
         this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
         this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
-        this.mSonido.load();      
+        this.mSonido.load();
+        
+        //Play the music
+        MusicFactory.setAssetBasePath("mfx/");
+		try {
+			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "MusicaFondo.ogg");
+			this.mMusic.setLooping(true);
+		} catch (final IOException e) {
+			//Debug.e("Error", e);
+		}
+		mMusic.play();
 	}
 
     // ============================================================
@@ -110,6 +124,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaJugar.this, PantallaSeleccionar.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -121,6 +136,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaJugar.this, PantallaGame.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -132,6 +148,7 @@ public class PantallaJugar extends SimpleBaseGameActivity{
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaJugar.this, ActivityProyecto.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -142,10 +159,10 @@ public class PantallaJugar extends SimpleBaseGameActivity{
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		if(pSceneTouchEvent.isActionDown()) {
-					if(Musica.mMusic.isPlaying()) {
-						Musica.mMusic.pause();
+					if(PantallaJugar.this.mMusic.isPlaying()) {
+						PantallaJugar.this.mMusic.pause();
 					} else {
-						Musica.mMusic.play();
+						PantallaJugar.this.mMusic.play();
 					}
 				}
 				return true;
