@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
+import org.andengine.audio.sound.Sound;
+import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -46,8 +48,9 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
     
     private Scene mScene;
     
-    //Sonido
+    //Sonido y Musica
     public Music mMusic;
+    private Sound mClicButton;
 
     // ============================================================
     // Method: onCreateEmgineOptions
@@ -57,6 +60,7 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
     	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
 		engineOptions.getAudioOptions().setNeedsMusic(true);
+		engineOptions.getAudioOptions().setNeedsSound(true);
         return engineOptions;   
 	}
 
@@ -93,9 +97,12 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         
         //Play the music
         MusicFactory.setAssetBasePath("mfx/");
+        //Play the sound
+  		SoundFactory.setAssetBasePath("mfx/");
 		try {
 			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "MusicaFondo.ogg");
 			this.mMusic.setLooping(true);
+			this.mClicButton = SoundFactory.createSoundFromAsset(this.mEngine.getSoundManager(), this, "SoundClic.ogg");
 		} catch (final IOException e) {
 			//Debug.e("Error", e);
 		}
@@ -124,6 +131,7 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         //BotonAcercaDe
         final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager){
         	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		PantallaAyuda.this.mClicButton.play();
         		Intent intent = new Intent (PantallaAyuda.this, PantallaAcercaDe.class);
         		startActivity(intent);
         		finish();
@@ -135,6 +143,7 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         //BotonTutorial
         final Sprite boton2 = new Sprite(0, CAMERA_HEIGHT - this.mBoton2.getHeight() - 390 + 55, this.mBoton2, vertexBufferObjectManager){
         	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		PantallaAyuda.this.mClicButton.play();
         		Intent intent = new Intent (PantallaAyuda.this, PantallaTutorial.class);
         		startActivity(intent);
         		finish();
@@ -146,6 +155,7 @@ public class PantallaAyuda extends SimpleBaseGameActivity{
         //BotonAtras
         final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
         	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
+        		PantallaAyuda.this.mClicButton.play();
         		Intent intent = new Intent (PantallaAyuda.this, ActivityProyecto.class);
         		startActivity(intent);
         		finish();
