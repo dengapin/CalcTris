@@ -8,13 +8,21 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.Text;
+import org.andengine.entity.text.TextOptions;
 import org.andengine.entity.util.FPSLogger;
+import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
+import org.andengine.util.HorizontalAlign;
+
+import android.content.Intent;
+import android.graphics.Typeface;
 
 public class PantallaPuntajes extends SimpleBaseGameActivity{
 	
@@ -32,15 +40,22 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
     private BitmapTextureAtlas mBotones;//Arreglo de botones
     private ITextureRegion mBoton1;//BotonAtras
     
+    private BitmapTextureAtlas mSonido;
+    private ITextureRegion mSonidoRegionOn;
+
     private Scene mScene;
+	private org.andengine.opengl.font.Font Font;
 
     // ============================================================
     // Method: onCreateEmgineOptions
     // ============================================================
 	@Override
 	public EngineOptions onCreateEngineOptions() {
+		
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+    	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+        return engineOptions;
 	}
 
     // ============================================================
@@ -63,11 +78,18 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
         this.mNube.load();
         
         //Para los botones
-        this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 135, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
-        //Buscar la imagen Boton Atras
-        this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAyuda.png", 0, 0);//BotonAtras
+        this.mBotones = new BitmapTextureAtlas(this.getTextureManager(),148, 45, TextureOptions.BILINEAR);//Arreglo para los botones iniciales
+        this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAtras.png", 0, 0);//BotonAtras
         this.mBotones.load();
-		
+        	
+        //Para el boton del sonido
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+        this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
+        this.mSonido.load();
+        
+        //Para la letra
+        this.Font = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font.load();
 	}
 
     // ============================================================
@@ -87,11 +109,25 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
         fondo.attachParallaxEntity(new ParallaxEntity(-10.0f, new Sprite(0, 0, this.mNubeRegion, vertexBufferObjectManager)));
         this.mScene.setBackground(fondo);
         
+        //Para la letra
+ 		final Text centerText = new Text(20, 400, this.Font, "Nivel", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+		this.mScene.attachChild(centerText);
+		
         //Para los botones
-        //Colocar nuevas coordenadas
-        final Sprite boton1 = new Sprite(0, CAMERA_HEIGHT - this.mBoton1.getHeight() - 390, this.mBoton1, vertexBufferObjectManager);
+        final Sprite boton1 = new Sprite(0, 50, this.mBoton1, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		Intent intent = new Intent (PantallaPuntajes.this, ActivityProyecto.class);
+        		startActivity(intent);
+        		return true;
+        	}
+        };
         this.mScene.attachChild(boton1);
-                                        
+        //BotonSonido
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        mScene.registerTouchArea(On);
+        mScene.attachChild(On);
+                                                
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;
 	}

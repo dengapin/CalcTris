@@ -1,5 +1,9 @@
 package ec.calctris.ihmproyecto;
 
+import java.io.IOException;
+
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -36,8 +40,12 @@ public class PantallaSeleccionar extends SimpleBaseGameActivity{
     private ITextureRegion mBoton1;//BotonSumar
     private ITextureRegion mBoton2;//BotonRestar
     private ITextureRegion mBoton3;//BotonAtras
-
+    
+    private BitmapTextureAtlas mSonido;
+    private ITextureRegion mSonidoRegionOn;
+    
     private Scene mScene;
+    public Music mMusic;
 
     
     // ============================================================
@@ -47,7 +55,9 @@ public class PantallaSeleccionar extends SimpleBaseGameActivity{
 	public EngineOptions onCreateEngineOptions() {
 
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+    	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+        return engineOptions;
 	}
 
 	// ============================================================
@@ -74,8 +84,22 @@ public class PantallaSeleccionar extends SimpleBaseGameActivity{
         this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonSuma.png", 0, 0);//BotonSumar
         this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonResta.png", 0, 45);//BotonRestar
         this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonAtras.png", 0, 90);//BotonAtras
-        this.mBotones.load();
+        this.mBotones.load();       
 		
+        //Para el boton del sonido
+        this.mSonido = new BitmapTextureAtlas(this.getTextureManager(), 50, 50, TextureOptions.BILINEAR);
+        this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
+        this.mSonido.load();
+        
+        //Play the music
+        MusicFactory.setAssetBasePath("mfx/");
+		try {
+			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "MusicaFondo.ogg");
+			this.mMusic.setLooping(true);
+		} catch (final IOException e) {
+			//Debug.e("Error", e);
+		}
+		mMusic.play();
 	}
 
 	// ============================================================
@@ -102,6 +126,7 @@ public class PantallaSeleccionar extends SimpleBaseGameActivity{
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaSeleccionar.this, PantallaGame.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -113,6 +138,7 @@ public class PantallaSeleccionar extends SimpleBaseGameActivity{
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaSeleccionar.this, PantallaGame.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -122,14 +148,31 @@ public class PantallaSeleccionar extends SimpleBaseGameActivity{
         final Sprite boton3 = new Sprite(0, CAMERA_HEIGHT - this.mBoton3.getHeight() - 390 + 110, this.mBoton3, vertexBufferObjectManager){
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
-        		Intent intent = new Intent (PantallaSeleccionar.this, PantallaNivel.class);
+        		Intent intent = new Intent (PantallaSeleccionar.this, PantallaJugar.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
         this.mScene.registerTouchArea(boton3);//Se registra el evento
         this.mScene.attachChild(boton3);
-                                
+        //BotonSonido
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		if(pSceneTouchEvent.isActionDown()) {
+					if(PantallaSeleccionar.this.mMusic.isPlaying()) {
+						PantallaSeleccionar.this.mMusic.pause();
+					} else {
+						PantallaSeleccionar.this.mMusic.play();
+					}
+				}
+				return true;
+        	}
+        };
+        mScene.registerTouchArea(On);
+        mScene.attachChild(On);
+                                        
         this.mScene.setOnSceneTouchListenerBindingOnActionDownEnabled(true);
         return this.mScene;
 	}
