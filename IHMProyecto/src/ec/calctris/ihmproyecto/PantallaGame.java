@@ -7,8 +7,9 @@ import java.util.Random;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
+import org.andengine.audio.sound.Sound;
+import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.camera.Camera;
-import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -20,6 +21,8 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.AutoParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.Text;
+import org.andengine.entity.text.TextOptions;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -27,14 +30,17 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.sensor.acceleration.AccelerationData;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
+import org.andengine.util.HorizontalAlign;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.hardware.SensorManager;
 
 import com.badlogic.gdx.math.Vector2;
@@ -73,7 +79,11 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
     private Scene mScene;
     private PhysicsWorld myPhysicsWorld;
     public Music mMusic;
-    public Music mCollision;
+    private Sound mClicButton;
+    
+    //Fonts
+    private org.andengine.opengl.font.Font mfont1;
+    private org.andengine.opengl.font.Font mfont2;
     
     //Parte lógica
     public int [][] Matriz = new int[6][16];
@@ -88,6 +98,7 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
     	final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
     	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
 		engineOptions.getAudioOptions().setNeedsMusic(true);
+		engineOptions.getAudioOptions().setNeedsSound(true);
         return engineOptions;            
     }
 
@@ -131,14 +142,24 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
         
         //Play the music
         MusicFactory.setAssetBasePath("mfx/");
+        //Play the sound
+  		SoundFactory.setAssetBasePath("mfx/");
 		try {
 			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "SoundGame1.ogg");
-			this.mCollision = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "MusicaFondo.ogg");
 			this.mMusic.setLooping(true);
+			this.mClicButton = SoundFactory.createSoundFromAsset(this.mEngine.getSoundManager(), this, "SoundClic.ogg");
 		} catch (final IOException e) {
 			//Debug.e("Error", e);
 		}
 		mMusic.play();
+		
+		//Font
+		//Para el texto
+        this.mfont1 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 25);
+		this.mfont1.load();
+		//Para el texto
+        this.mfont2 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 25);
+		this.mfont2.load();
 	}
 
     // ============================================================
@@ -165,6 +186,7 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
         final Sprite botonPause = new Sprite(370, 400, this.mPausa, vertexBufferObjectManager){
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		PantallaGame.this.mClicButton.play();
         		Intent intent = new Intent (PantallaGame.this, PantallaPausa.class);
         		startActivity(intent);
         		finish();
@@ -189,6 +211,12 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
         };
         mScene.registerTouchArea(On);
         mScene.attachChild(On);
+        //Para el texto de Nivel
+        final Text centerText = new Text(350, 150, this.mfont1, "NIVEL 1 ", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+        mScene.attachChild(centerText);
+        //Para el texto de Puntajes
+        final Text centerText2 = new Text(350, 200, this.mfont2, "PUNTAJE", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+        mScene.attachChild(centerText2);
         
         //El mundo físico
         final Rectangle pared1 = new Rectangle(0, 0, 1, CAMERA_HEIGHT, vertexBufferObjectManager);

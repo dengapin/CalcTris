@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
+import org.andengine.audio.sound.Sound;
+import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -47,6 +49,7 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
     private BitmapTextureAtlas mSonido;
     private ITextureRegion mSonidoRegionOn;
     public Music mMusic;
+    private Sound mClicButton;
         
     private Scene mScene;
     
@@ -61,6 +64,7 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
     	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
 		engineOptions.getAudioOptions().setNeedsMusic(true);
+		engineOptions.getAudioOptions().setNeedsSound(true);
         return engineOptions; 
 	}
 
@@ -94,14 +98,17 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
         this.mSonido.load();
         
         //Para el texto
-        this.mfont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 20);
+        this.mfont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 25);
 		this.mfont.load();
 		
 		//Play the music
         MusicFactory.setAssetBasePath("mfx/");
+        //Play the sound
+  		SoundFactory.setAssetBasePath("mfx/");
 		try {
 			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "MusicaFondo.ogg");
 			this.mMusic.setLooping(true);
+			this.mClicButton = SoundFactory.createSoundFromAsset(this.mEngine.getSoundManager(), this, "SoundClic.ogg");
 		} catch (final IOException e) {
 			//Debug.e("Error", e);
 		}
@@ -126,6 +133,7 @@ public class PantallaTutorial extends SimpleBaseGameActivity{
         final Sprite boton1 = new Sprite(0, 50, this.mBoton1, vertexBufferObjectManager){
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		PantallaTutorial.this.mClicButton.play();
         		Intent intent = new Intent (PantallaTutorial.this, PantallaAyuda.class);
         		startActivity(intent);
         		finish();

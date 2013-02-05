@@ -1,5 +1,11 @@
 package ec.calctris.ihmproyecto;
 
+import java.io.IOException;
+
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
+import org.andengine.audio.sound.Sound;
+import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -42,10 +48,27 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
     
     private BitmapTextureAtlas mSonido;
     private ITextureRegion mSonidoRegionOn;
+    private Music mMusic;	
+    private Sound mClicButton;
 
     private Scene mScene;
 	private org.andengine.opengl.font.Font Font;
-
+	private org.andengine.opengl.font.Font Font2;
+	private org.andengine.opengl.font.Font Font3;
+	private org.andengine.opengl.font.Font Font4;
+	private org.andengine.opengl.font.Font Font5;
+	private org.andengine.opengl.font.Font Font6;
+	private org.andengine.opengl.font.Font Font7;
+	private org.andengine.opengl.font.Font Font8;
+	private org.andengine.opengl.font.Font Font9;
+	private org.andengine.opengl.font.Font Font10;
+	private org.andengine.opengl.font.Font Font11;
+	private org.andengine.opengl.font.Font Font12;
+	private org.andengine.opengl.font.Font Font13;
+	private org.andengine.opengl.font.Font Font14;
+	private org.andengine.opengl.font.Font Font15;
+	private org.andengine.opengl.font.Font Font16;
+	
     // ============================================================
     // Method: onCreateEmgineOptions
     // ============================================================
@@ -55,6 +78,7 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
 		final Camera mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
     	final EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
 		engineOptions.getAudioOptions().setNeedsMusic(true);
+		engineOptions.getAudioOptions().setNeedsSound(true);
         return engineOptions;
 	}
 
@@ -87,9 +111,52 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
         this.mSonidoRegionOn = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mSonido, this, "SonidoOn.png", 0, 0);
         this.mSonido.load();
         
+        //Play the music
+        MusicFactory.setAssetBasePath("mfx/");
+        //Play the sound
+  		SoundFactory.setAssetBasePath("mfx/");
+		try {
+			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "MusicaFondo.ogg");
+			this.mMusic.setLooping(true);
+			this.mClicButton = SoundFactory.createSoundFromAsset(this.mEngine.getSoundManager(), this, "SoundClic.ogg");
+		} catch (final IOException e) {
+			//Debug.e("Error", e);
+		}
+		mMusic.play();
+        
         //Para la letra
         this.Font = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
 		this.Font.load();
+		this.Font2 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font2.load();
+		this.Font3 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font3.load();
+		this.Font4 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font4.load();
+		this.Font5 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font5.load();
+		this.Font6 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font6.load();
+		this.Font7 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font7.load();
+		this.Font8 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font8.load();
+		this.Font9 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font9.load();
+		this.Font10 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font10.load();
+		this.Font11 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font11.load();
+		this.Font12 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font12.load();
+		this.Font13 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font13.load();
+		this.Font14 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font14.load();
+		this.Font15 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font15.load();
+		this.Font16 = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+		this.Font16.load();
 	}
 
     // ============================================================
@@ -110,21 +177,49 @@ public class PantallaPuntajes extends SimpleBaseGameActivity{
         this.mScene.setBackground(fondo);
         
         //Para la letra
- 		final Text centerText = new Text(20, 400, this.Font, "Nivel", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+ 		final Text centerText = new Text(20, 300, this.Font, "SUMA", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
 		this.mScene.attachChild(centerText);
+		final Text centerText2 = new Text(20, 340, this.Font, "NIVELES", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+		this.mScene.attachChild(centerText2);
+		final Text centerText3 = new Text(200, 340, this.Font, "1", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+		this.mScene.attachChild(centerText3);
+		final Text centerText4 = new Text(250, 340, this.Font, "2", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+		this.mScene.attachChild(centerText4);
+		final Text centerText5 = new Text(300, 340, this.Font, "3", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+		this.mScene.attachChild(centerText5);
+		final Text centerText6 = new Text(350, 340, this.Font, "4", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+		this.mScene.attachChild(centerText6);
+		final Text centerText7 = new Text(400, 340, this.Font, "5", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+		this.mScene.attachChild(centerText7);
+		final Text centerText8 = new Text(20, 380, this.Font, "PUNTAJES", new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+		this.mScene.attachChild(centerText8);
 		
         //Para los botones
         final Sprite boton1 = new Sprite(0, 50, this.mBoton1, vertexBufferObjectManager){
         	@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		PantallaPuntajes.this.mClicButton.play();
         		Intent intent = new Intent (PantallaPuntajes.this, ActivityProyecto.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
         this.mScene.attachChild(boton1);
         //BotonSonido
-        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager);
+        final Sprite On = new Sprite(400, 50, this.mSonidoRegionOn, vertexBufferObjectManager){
+        	@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
+        		if(pSceneTouchEvent.isActionDown()) {
+					if(PantallaPuntajes.this.mMusic.isPlaying()) {
+						PantallaPuntajes.this.mMusic.pause();
+					} else {
+						PantallaPuntajes.this.mMusic.play();
+					}
+				}
+				return true;
+        	}
+        };
         mScene.registerTouchArea(On);
         mScene.attachChild(On);
                                                 
