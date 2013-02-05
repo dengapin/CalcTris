@@ -11,6 +11,11 @@ import org.andengine.engine.options.WakeLockOptions;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
+
+import com.game.manager.ResourcesManager;
+import com.game.manager.SFXManager;
+import com.game.manager.SceneManager;
+
 import android.view.KeyEvent;
 
 
@@ -31,7 +36,7 @@ public class CalcTrisGame extends BaseGameActivity
 
 	@SuppressWarnings("unused")
 	private ResourcesManager resourcesManager;
-
+	private SFXManager soundsManger;
 	@Override
 	public Engine onCreateEngine(EngineOptions pEngineOptions) {
 		// TODO Auto-generated method stub
@@ -43,8 +48,9 @@ public class CalcTrisGame extends BaseGameActivity
 		// TODO Auto-generated method stub
 		this. camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 		    EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.PORTRAIT_SENSOR, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.camera);
-		    engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
-		    engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
+		    engineOptions.getAudioOptions().setNeedsMusic(true);//for the long audio playback
+		    engineOptions.getAudioOptions().setNeedsSound(true);//for short audio playback
+		    engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);//for dont turn off display when its become inactivity
 		    return engineOptions;
 	}
 
@@ -55,6 +61,7 @@ public class CalcTrisGame extends BaseGameActivity
 		//set base path to the Images
 		ResourcesManager.prepareManager(mEngine, this, camera, getVertexBufferObjectManager());
 	    resourcesManager = ResourcesManager.getInstance();
+	    soundsManger=SFXManager.getInstance();
 		arg0.onCreateResourcesFinished();
 	}
 

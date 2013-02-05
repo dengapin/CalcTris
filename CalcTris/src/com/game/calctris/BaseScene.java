@@ -5,7 +5,8 @@ import org.andengine.engine.camera.Camera;
 import org.andengine.entity.scene.Scene;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-import com.game.calctris.SceneManager.SceneType;
+import com.game.manager.ResourcesManager;
+import com.game.manager.SceneManager.SceneType;
 
 import android.app.Activity;
 
@@ -13,7 +14,7 @@ public abstract class BaseScene extends Scene{
 	//---------------------------------------------
     // VARIABLES
     //---------------------------------------------
-    
+	
     protected Engine engine;
     protected Activity activity;
     protected ResourcesManager resourcesManager;
