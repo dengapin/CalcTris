@@ -82,7 +82,7 @@ public class PantallaPausa extends SimpleBaseGameActivity{
         this.mBoton1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonContinuar.png", 0, 0);//BotonContinuar
         this.mBoton2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonJuegoNuevo.png", 0, 45);//BotonNuevaPartida
         this.mBoton3 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonTutorial.png", 0, 90);//BotonTutorial
-        this.mBoton4 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "home.png", 0, 135);//BotonHome
+        this.mBoton4 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBotones, this, "BotonHome.png", 0, 135);//BotonHome
         this.mBotones.load();
         
         //Para el boton del sonido
@@ -153,7 +153,7 @@ public class PantallaPausa extends SimpleBaseGameActivity{
         this.mScene.registerTouchArea(boton3);
         this.mScene.attachChild(boton3);
         //BotonHome
-        final Sprite boton4 = new Sprite(160, 420, this.mBoton4, vertexBufferObjectManager){
+        final Sprite boton4 = new Sprite(0, CAMERA_HEIGHT - this.mBoton4.getHeight() - 390 + 165, this.mBoton4, vertexBufferObjectManager){
         	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaPausa.this, ActivityProyecto.class);
         		startActivity(intent);

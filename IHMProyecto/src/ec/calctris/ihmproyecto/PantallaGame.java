@@ -8,6 +8,7 @@ import java.util.Random;
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -72,6 +73,7 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
     private Scene mScene;
     private PhysicsWorld myPhysicsWorld;
     public Music mMusic;
+    public Music mCollision;
     
     //Parte lógica
     public int [][] Matriz = new int[6][16];
@@ -131,6 +133,7 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
         MusicFactory.setAssetBasePath("mfx/");
 		try {
 			this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "SoundGame1.ogg");
+			this.mCollision = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "MusicaFondo.ogg");
 			this.mMusic.setLooping(true);
 		} catch (final IOException e) {
 			//Debug.e("Error", e);
@@ -164,6 +167,7 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY){
         		Intent intent = new Intent (PantallaGame.this, PantallaPausa.class);
         		startActivity(intent);
+        		finish();
         		return true;
         	}
         };
@@ -211,7 +215,6 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
         
         //Parte logica del juego
         
-        
         return this.mScene; 
            
     }
@@ -247,7 +250,7 @@ public class PantallaGame extends SimpleBaseGameActivity implements IAcceleratio
 		final FixtureDef textureSphere = PhysicsFactory.createFixtureDef(0, 0f, 10.0f);
 		
 		InicializarMatriz();
-		Sprite OneSphere = new Sprite (num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager()){
+		final Sprite OneSphere = new Sprite (num, py, this.mFondoEsferas[aleatorio], this.getVertexBufferObjectManager()){
         	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
         		if(pSceneTouchEvent.isActionMove()){
         			this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, pSceneTouchEvent.getY() - this.getHeight() / 2);
