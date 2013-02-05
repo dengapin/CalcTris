@@ -36,6 +36,7 @@ public class CalcTrisGame extends BaseGameActivity
 
 	@SuppressWarnings("unused")
 	private ResourcesManager resourcesManager;
+	@SuppressWarnings("unused")
 	private SFXManager soundsManger;
 	@Override
 	public Engine onCreateEngine(EngineOptions pEngineOptions) {
